@@ -37,7 +37,7 @@ export function Footer() {
             </p>
           </div>
         </div>
-        <p className="footer-note mb-0">Maquette d'interface — React 19 + TypeScript. Toutes fonctionnalités implémentées.</p>
+    
       </div>
     </footer>
   );
