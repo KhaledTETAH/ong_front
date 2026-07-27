@@ -1,17 +1,14 @@
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import ONGProfilePage from "./pages/OngProfilePage";
 
 function App() {
   return (
-    <Container className="py-5 text-center">
-      <h1>ONG — Front</h1>
-      <p className="text-muted">
-        Bootstrap est prêt. Développez dans <code>src/</code> en suivant
-        l&apos;organisation décrite dans le <code>README.md</code>.
-      </p>
-      <Button variant="primary">Faire un don</Button>
-    </Container>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<ONGProfilePage />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;
