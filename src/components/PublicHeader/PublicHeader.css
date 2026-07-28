@@ -1,0 +1,110 @@
+.site-header {
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  position: sticky;
+  top: 0;
+  z-index: 30;
+}
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+  flex-wrap: wrap;
+}
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-weight: 700;
+  color: var(--color-primary-dark);
+  text-decoration: none;
+  font-size: 1.05rem;
+}
+.brand-mark {
+  display: inline-grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  background: var(--color-primary);
+  color: #fff;
+}
+.main-navigation {
+  margin-left: var(--space-3);
+}
+.main-navigation ul {
+  display: flex;
+  gap: var(--space-3);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.main-navigation a {
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm);
+}
+.main-navigation a:hover,
+.main-navigation a.is-active {
+  background: var(--color-primary-soft);
+  color: var(--color-primary-dark);
+}
+.header-cta {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.mobile-nav {
+  display: none;
+  margin-left: auto;
+  position: relative;
+}
+.mobile-nav summary {
+  list-style: none;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--color-primary-dark);
+}
+.mobile-nav summary::-webkit-details-marker {
+  display: none;
+}
+.mobile-nav ul {
+  position: absolute;
+  right: 0;
+  top: 130%;
+  min-width: 230px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  list-style: none;
+  margin: 0;
+  padding: var(--space-2);
+  z-index: 40;
+}
+.mobile-nav ul a {
+  display: block;
+  padding: var(--space-2);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  text-decoration: none;
+  font-weight: 600;
+}
+.mobile-nav ul a:hover {
+  background: var(--color-primary-soft);
+}
+
+@media (max-width: 991.98px) {
+  .btn-header-desktop,
+  .main-navigation {
+    display: none !important;
+  }
+  .mobile-nav {
+    display: block;
+  }
+}
