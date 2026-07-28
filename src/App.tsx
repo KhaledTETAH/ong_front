@@ -5,7 +5,7 @@ import {
   AuthLayout,
 } from "@/components/Layout/Layout";
 import EspaceCandidatPage from "./pages/EspaceCandidatPage";
-import OngProfilePage from "./pages/ONGProfilePage";
+import OngProfilePage from "./pages/OngProfilePage";
 import FicheCandidatPage from "./pages/FicheCandidatPage";
 
 export default function App() {

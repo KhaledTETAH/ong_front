@@ -47,10 +47,6 @@ export default function FullFooter() {
             </ul>
           </div>
         </div>
-        <p className="footer-note mb-0">
-          Maquette d'interface — HTML5, CSS3 et Bootstrap 5. Contact et suivi à
-          relier au backend.
-        </p>
       </div>
     </footer>
   );

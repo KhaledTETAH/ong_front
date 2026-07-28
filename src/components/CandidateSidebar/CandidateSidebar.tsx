@@ -12,13 +12,13 @@ export default function CandidateSidebar({
   const links = [
     {
       key: "candidatures",
-      to: "/",
+      to: "/candidat/espace",
       icon: "bi-clipboard-check",
       label: "Mes candidatures",
     },
     {
       key: "fiche",
-      to: "/candidat-fiche",
+      to: "/candidat/fiche",
       icon: "bi-briefcase",
       label: "Fiche « poste recherché »",
     },

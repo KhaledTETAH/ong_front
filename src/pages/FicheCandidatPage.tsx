@@ -1,7 +1,16 @@
-import CandidateSidebar from "@/components/CandidateSidebar/CandidateSidebar";
 import { Link } from "react-router-dom";
+import CandidateSidebar from "@/components/CandidateSidebar/CandidateSidebar";
+import { useCandidat } from "@/hooks/useCandidat";
 
 export default function FicheCandidatPage() {
+  const { data: candidate, isLoading, isError, error } = useCandidat("1");
+
+  if (isLoading) return <p>Chargement...</p>;
+  if (isError) return <p>Erreur : {error.message}</p>;
+  if (!candidate) return null;
+
+  const { fiche } = candidate;
+
   return (
     <main id="contenu" className="candidate-main">
       <div className="container">
@@ -37,7 +46,7 @@ export default function FicheCandidatPage() {
                         className="form-control"
                         required
                         maxLength={120}
-                        defaultValue="Chef de projet éducation"
+                        defaultValue={fiche.titre}
                       />
                       <p className="form-text">
                         Court et explicite : c'est ce que les ONG verront en
@@ -56,7 +65,7 @@ export default function FicheCandidatPage() {
                           multiple
                           size={4}
                           aria-describedby="p-type-help"
-                          defaultValue={["Bénévolat", "Salariat"]}
+                          defaultValue={fiche.typesEngagement}
                         >
                           <option>Bénévolat</option>
                           <option>Salariat</option>
@@ -75,7 +84,7 @@ export default function FicheCandidatPage() {
                           id="p-niveau"
                           name="niveau"
                           className="form-select"
-                          defaultValue="Confirmé"
+                          defaultValue={fiche.niveau}
                         >
                           <option>Junior</option>
                           <option>Confirmé</option>
@@ -98,7 +107,7 @@ export default function FicheCandidatPage() {
                           id="p-causes"
                           name="causes"
                           className="form-control"
-                          defaultValue="Éducation, Solidarité"
+                          defaultValue={fiche.causes}
                         />
                       </div>
                       <div className="col-sm-6">
@@ -111,6 +120,7 @@ export default function FicheCandidatPage() {
                           name="exclues"
                           className="form-control"
                           placeholder="Optionnel"
+                          defaultValue={fiche.causesExclues}
                         />
                       </div>
                       <div className="col-sm-6">
@@ -122,7 +132,7 @@ export default function FicheCandidatPage() {
                           id="p-geo"
                           name="geo"
                           className="form-control"
-                          defaultValue="Oran, Alger, à distance"
+                          defaultValue={fiche.geo}
                         />
                       </div>
                       <div className="col-sm-6">
@@ -133,7 +143,7 @@ export default function FicheCandidatPage() {
                           id="p-mobilite"
                           name="mobilite"
                           className="form-select"
-                          defaultValue="Nationale"
+                          defaultValue={fiche.mobilite}
                         >
                           <option>Locale</option>
                           <option>Nationale</option>
@@ -155,7 +165,7 @@ export default function FicheCandidatPage() {
                           id="p-volume"
                           name="volume"
                           className="form-select"
-                          defaultValue="Temps partiel"
+                          defaultValue={fiche.volume}
                         >
                           <option>Temps plein</option>
                           <option>Temps partiel</option>
@@ -176,6 +186,7 @@ export default function FicheCandidatPage() {
                             min={0}
                             step={10}
                             placeholder="0"
+                            defaultValue={fiche.tjm}
                           />
                           <span className="input-group-text">€ / jour</span>
                         </div>
@@ -195,9 +206,10 @@ export default function FicheCandidatPage() {
                           type="date"
                           id="p-dispo"
                           name="dispo"
-                          className="form-control is-invalid"
+                          className="form-control"
                           aria-describedby="p-dispo-err"
                           required
+                          defaultValue={fiche.disponibleAPartirDu}
                         />
                         <p id="p-dispo-err" className="field-error">
                           <i className="bi bi-exclamation-circle"></i> Veuillez
@@ -219,7 +231,7 @@ export default function FicheCandidatPage() {
                         id="p-comp-valoriser"
                         name="comp-valoriser"
                         className="form-control"
-                        defaultValue="Gestion de projet, pédagogie, coordination"
+                        defaultValue={fiche.competencesAValoriser}
                       />
                     </div>
                     <div className="mb-1">
@@ -232,6 +244,7 @@ export default function FicheCandidatPage() {
                         name="comp-developper"
                         className="form-control"
                         placeholder="Ex. levée de fonds, suivi-évaluation"
+                        defaultValue={fiche.competencesADevelopper}
                       />
                     </div>
                   </div>
@@ -243,7 +256,7 @@ export default function FicheCandidatPage() {
                         className="form-check-input"
                         type="checkbox"
                         id="p-actif"
-                        defaultChecked
+                        defaultChecked={fiche.rechercheActive}
                       />
                       <label className="form-check-label" htmlFor="p-actif">
                         Mode « je cherche activement » — ma fiche est visible
@@ -255,7 +268,7 @@ export default function FicheCandidatPage() {
                         className="form-check-input"
                         type="checkbox"
                         id="p-alerte"
-                        defaultChecked
+                        defaultChecked={fiche.alerteEmail}
                       />
                       <label className="form-check-label" htmlFor="p-alerte">
                         Recevoir par e-mail les nouvelles offres correspondant à
