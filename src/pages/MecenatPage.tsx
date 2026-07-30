@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { Footer } from '@/components/Footer/Footer';
 import { useSubmitMecenat } from '@/hooks/useMecenat';
-// import { Link } from 'wouter';
+
 
 export function MecenatPage() {
   const submitMecenat = useSubmitMecenat();

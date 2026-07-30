@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Link, useLocation } from 'wouter';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/context/authStore';
 
 export function LoginPage() {
-  const [_, setLocation] = useLocation();
+  const navigate = useNavigate();
   const { setToken, setUserRole } = useAuthStore();
   
   const [email, setEmail] = useState('');
@@ -22,7 +22,7 @@ export function LoginPage() {
     if (email && password) {
       setToken('mock-token');
       setUserRole('candidat'); // just default to candidat
-      setLocation('/');
+      navigate('/');
     }
   };
 
@@ -33,11 +33,11 @@ export function LoginPage() {
       <header className="site-header">
         <div className="container">
           <div className="header-inner">
-            <Link href="/" className="brand">
+            <Link to="/" className="brand">
               <span className="brand-mark" aria-hidden="true"><i className="bi bi-people-fill"></i></span>
               Plateforme de l'engagement
             </Link>
-            <Link href="/" className="btn btn-subtle btn-sm">
+            <Link to="/" className="btn btn-subtle btn-sm">
               <i className="bi bi-arrow-left"></i> Retour au portail
             </Link>
           </div>

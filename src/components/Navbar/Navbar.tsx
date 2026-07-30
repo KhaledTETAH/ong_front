@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 export function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -7,8 +8,8 @@ export function Navbar() {
     <header className="site-header">
       <div className="container">
         <div className="header-inner">
-          <a
-            href="/"
+          <Link
+            to="/"
             className="brand"
             aria-label="Accueil de la Plateforme de l'engagement"
           >
@@ -16,29 +17,29 @@ export function Navbar() {
               <i className="bi bi-people-fill"></i>
             </span>
             Plateforme de l'engagement
-          </a>
+          </Link>
 
           <nav className="main-navigation" aria-label="Navigation principale">
             <ul>
               <li>
-                <a href="/missions">Missions</a>
+                <Link to="/missions">Missions</Link>
               </li>
               <li>
-                <a href="/annuaire">Annuaire</a>
+                <Link to="/annuaire">Annuaire</Link>
               </li>
               <li>
-                <a href="/mecenat">Mécénat</a>
+                <Link to="/mecenat">Mécénat</Link>
               </li>
             </ul>
           </nav>
 
           <div className="header-cta">
-            <a href="/connexion" className="btn btn-subtle btn-sm btn-header-desktop">
+            <Link to="/connexion" className="btn btn-subtle btn-sm btn-header-desktop">
               Se connecter
-            </a>
-            <a href="/connexion" className="btn btn-primary btn-sm btn-header-desktop">
+            </Link>
+            <Link to="/connexion" className="btn btn-primary btn-sm btn-header-desktop">
               Créer un compte
-            </a>
+            </Link>
           </div>
 
           <details
@@ -54,19 +55,19 @@ export function Navbar() {
 
             <ul>
               <li>
-                <a href="/missions">Missions</a>
+                <Link to="/missions">Missions</Link>
               </li>
               <li>
-                <a href="/annuaire">Annuaire</a>
+                <Link to="/annuaire">Annuaire</Link>
               </li>
               <li>
-                <a href="/mecenat">Mécénat</a>
+                <Link to="/mecenat">Mécénat</Link>
               </li>
               <li>
-                <a href="/connexion">Se connecter</a>
+                <Link to="/connexion">Se connecter</Link>
               </li>
               <li>
-                <a href="/connexion">Créer un compte</a>
+                <Link to="/connexion">Créer un compte</Link>
               </li>
             </ul>
           </details>

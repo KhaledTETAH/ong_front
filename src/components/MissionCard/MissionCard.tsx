@@ -1,4 +1,4 @@
-// import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 import type { Mission } from '@/types/mission';
 import { TrustBadge } from '../TrustBadge/TrustBadge';
 
@@ -23,9 +23,9 @@ export function MissionCard({ mission }: { mission: Mission }) {
       </div>
       
       <div className="mt-auto pt-2">
-        <a href={`/missions/${mission.id}`} className="btn btn-primary btn-sm">
+        <Link to={`/missions/${mission.id}`} className="btn btn-primary btn-sm">
           Voir l'offre
-        </a>
+        </Link>
       </div>
     </article>
   );

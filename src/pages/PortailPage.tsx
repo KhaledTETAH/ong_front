@@ -1,4 +1,4 @@
-import { Link } from 'wouter';
+import { Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { Footer } from '@/components/Footer/Footer';
 import { MissionCard } from '@/components/MissionCard/MissionCard';
@@ -23,8 +23,8 @@ export function PortailPage() {
                   et le mécénat de compétences. Gratuit, transparent, de la France au Maghreb.
                 </p>
                 <div className="d-flex flex-column flex-sm-row gap-2">
-                  <Link href="/missions" className="btn btn-accent btn-lg">Voir les missions</Link>
-                  <Link href="/mecenat" className="btn btn-outline-light btn-lg">Proposer un mécénat</Link>
+                  <Link to="/missions" className="btn btn-accent btn-lg">Voir les missions</Link>
+                  <Link to="/mecenat" className="btn btn-outline-light btn-lg">Proposer un mécénat</Link>
                 </div>
                 <p className="hero-meta">
                   <i className="bi bi-geo-alt"></i> France · Belgique · Suisse · Algérie · Maroc · Tunisie
@@ -58,7 +58,7 @@ export function PortailPage() {
                 <h2 id="missions-title">Missions proposées sur la plateforme</h2>
                 <p>Un aperçu des besoins récents. Retrouvez l'ensemble avec la recherche et les filtres.</p>
               </div>
-              <Link href="/missions" className="btn btn-primary">Voir toutes les missions</Link>
+              <Link to="/missions" className="btn btn-primary">Voir toutes les missions</Link>
             </div>
 
             {isLoading ? (
@@ -87,7 +87,7 @@ export function PortailPage() {
                   <span className="value-icon" aria-hidden="true"><i className="bi bi-building-check"></i></span>
                   <h3>Organisations</h3>
                   <p className="text-soft">Publication illimitée et gratuite, ATS embarqué, vivier de talents, réception de propositions de mécénat.</p>
-                  <Link href="/connexion" className="btn btn-outline-primary btn-sm">Espace organisation</Link>
+                  <Link to="/connexion" className="btn btn-outline-primary btn-sm">Espace organisation</Link>
                 </div>
               </div>
               <div className="col-md-4">
@@ -95,7 +95,7 @@ export function PortailPage() {
                   <span className="value-icon" aria-hidden="true"><i className="bi bi-person-badge"></i></span>
                   <h3>Candidats</h3>
                   <p className="text-soft">Fiche « poste recherché », recherche par mot-clé et alertes, candidature simple et suivi en temps réel.</p>
-                  <Link href="/connexion" className="btn btn-outline-primary btn-sm">Espace candidat</Link>
+                  <Link to="/connexion" className="btn btn-outline-primary btn-sm">Espace candidat</Link>
                 </div>
               </div>
               <div className="col-md-4">
@@ -103,7 +103,7 @@ export function PortailPage() {
                   <span className="value-icon" aria-hidden="true"><i className="bi bi-gift"></i></span>
                   <h3>Entreprises mécènes</h3>
                   <p className="text-soft">Un tunnel léger, sans espace dédié : déposez une mission ou des profils et suivez la convention via un référent unique.</p>
-                  <Link href="/mecenat" className="btn btn-outline-primary btn-sm">Découvrir le mécénat</Link>
+                  <Link to="/mecenat" className="btn btn-outline-primary btn-sm">Découvrir le mécénat</Link>
                 </div>
               </div>
             </div>

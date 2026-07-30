@@ -1,4 +1,4 @@
-import { useParams, Link } from 'wouter';
+import { useParams, Link } from 'react-router-dom';
 import { Navbar } from '@/components/Navbar/Navbar';
 import { Footer } from '@/components/Footer/Footer';
 import { TrustBadge } from '@/components/TrustBadge/TrustBadge';
@@ -30,7 +30,7 @@ export function OffrePage() {
         <Navbar />
         <main className="container py-5 text-center">
           <h2>Offre introuvable</h2>
-          <Link href="/missions" className="btn btn-primary mt-3">Retour aux missions</Link>
+          <Link to="/missions" className="btn btn-primary mt-3">Retour aux missions</Link>
         </main>
         <Footer />
       </>
@@ -45,8 +45,8 @@ export function OffrePage() {
         <div className="container">
           <nav aria-label="Fil d'Ariane" className="pt-3">
             <ol className="breadcrumb">
-              <li className="breadcrumb-item"><Link href="/">Accueil</Link></li>
-              <li className="breadcrumb-item"><Link href="/missions">Missions</Link></li>
+              <li className="breadcrumb-item"><Link to="/">Accueil</Link></li>
+              <li className="breadcrumb-item"><Link to="/missions">Missions</Link></li>
               <li className="breadcrumb-item active" aria-current="page">{mission.title}</li>
             </ol>
           </nav>
@@ -58,7 +58,7 @@ export function OffrePage() {
             <h1 id="offre-title">{mission.title}</h1>
             <p className="offre-org mb-2">
               <i className="bi bi-building" aria-hidden="true"></i>{' '}
-              <Link href="/annuaire">{mission.orgName}</Link>{' '}
+              <Link to="/annuaire">{mission.orgName}</Link>{' '}
               {mission.orgVerified && <TrustBadge level="verified" />}
             </p>
             <div className="offre-meta">
@@ -118,7 +118,7 @@ export function OffrePage() {
                   <p className="apply-lead mb-1">Cette mission vous intéresse ?</p>
                   <p className="text-soft small mb-3">La candidature se fait en quelques clics depuis votre espace candidat.</p>
                   <div className="d-grid gap-2">
-                    <Link href="/connexion" className="btn btn-primary btn-lg">Postuler</Link>
+                    <Link to="/connexion" className="btn btn-primary btn-lg">Postuler</Link>
                     <button className="btn btn-subtle"><i className="bi bi-bookmark"></i> Sauvegarder l'offre</button>
                     <button className="btn btn-subtle"><i className="bi bi-share"></i> Partager</button>
                   </div>
@@ -134,7 +134,7 @@ export function OffrePage() {
                     </div>
                   </div>
                   <p className="text-soft small mb-2">Engagée pour ses causes.</p>
-                  <Link href="/annuaire" className="btn btn-outline-primary btn-sm w-100">Voir le profil de l'organisation</Link>
+                  <Link to="/annuaire" className="btn btn-outline-primary btn-sm w-100">Voir le profil de l'organisation</Link>
                 </div>
               </div>
 

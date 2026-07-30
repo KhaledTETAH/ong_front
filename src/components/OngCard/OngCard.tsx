@@ -1,4 +1,4 @@
-// import { Link } from 'wouter';
+
 import type { Organization } from '@/types/organization';
 import { TrustBadge } from '../TrustBadge/TrustBadge';
 import { getInitials } from '@/utils/formatters';
