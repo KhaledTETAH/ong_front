@@ -1,10 +1,10 @@
-export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8000/api').replace(/\/$/, '');
+import type { ApiEnvelope } from '@/types/api';
 
-type QueryValue = string | number | boolean | null | undefined;
+export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/v1').replace(/\/$/, '');
 
 type ApiRequestOptions = Omit<RequestInit, 'body'> & {
-  body?: BodyInit | Record<string, unknown>;
-  query?: Record<string, QueryValue>;
+  body?: BodyInit | object;
+  query?: object;
   token?: string | null;
 };
 
@@ -20,6 +20,7 @@ export class ApiError extends Error {
   }
 }
 
+/** Sends one request to Django and preserves the server's error details. */
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const { body, query, token, headers, ...requestOptions } = options;
   const url = new URL(`${API_BASE_URL}/${path.replace(/^\//, '')}`);
@@ -41,12 +42,20 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   });
 
   const contentType = response.headers.get('content-type') ?? '';
-  const payload: unknown = contentType.includes('application/json') ? await response.json() : await response.text();
+  const payload: unknown = contentType.includes('application/json') ? await response.json() : null;
+
   if (!response.ok) {
-    const message = typeof payload === 'object' && payload !== null && 'detail' in payload
-      ? String(payload.detail)
+    const message = typeof payload === 'object' && payload !== null && 'message' in payload
+      ? String(payload.message)
       : `Request failed with status ${response.status}`;
     throw new ApiError(message, response.status, payload);
   }
+
   return payload as T;
+}
+
+/** Unwraps the common Django success envelope used by every API endpoint. */
+export async function apiData<T>(path: string, options?: ApiRequestOptions): Promise<T> {
+  const response = await apiRequest<ApiEnvelope<T>>(path, options);
+  return response.data;
 }

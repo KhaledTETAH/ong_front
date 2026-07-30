@@ -1,32 +1,27 @@
 import { Link } from 'react-router-dom';
-import type { Mission } from '@/types/mission';
+import type { OfferSummary } from '@/types/mission';
+import { engagementTypeLabels, remoteModeLabels } from '@/types/mission';
 import { TrustBadge } from '../TrustBadge/TrustBadge';
 
-export function MissionCard({ mission }: { mission: Mission }) {
+export function MissionCard({ mission }: { mission: OfferSummary }) {
+  const isVerified = ['verified', 'certified_plus'].includes(mission.organization.verification_status);
+  const location = [mission.city, mission.country.name_fr].filter(Boolean).join(', ');
+
   return (
     <article className="card offer-card p-3 h-100">
-      <p className="offer-org">
-        <i className="bi bi-building" aria-hidden="true"></i> {mission.orgName}
-      </p>
+      <p className="offer-org"><i className="bi bi-building" aria-hidden="true"></i> {mission.organization.name}</p>
       <h3 className="text-truncate" title={mission.title}>{mission.title}</h3>
       <div className="offer-meta">
-        <span><i className="bi bi-geo-alt" aria-hidden="true"></i> {mission.location}</span>
-        <span><i className="bi bi-clock" aria-hidden="true"></i> {mission.duration}</span>
-        <span><i className="bi bi-briefcase" aria-hidden="true"></i> {mission.engagementType}</span>
+        <span><i className="bi bi-geo-alt" aria-hidden="true"></i> {location}</span>
+        <span><i className="bi bi-clock" aria-hidden="true"></i> {mission.duration_label || 'Durée à définir'}</span>
+        <span><i className="bi bi-briefcase" aria-hidden="true"></i> {engagementTypeLabels[mission.engagement_type]}</span>
+        <span><i className="bi bi-easel" aria-hidden="true"></i> {remoteModeLabels[mission.remote_mode]}</span>
       </div>
-      
       <div className="d-flex flex-wrap gap-2 mb-3">
-        {mission.causes.map((cause, idx) => (
-          <span key={idx} className="status-badge status-neutral">{cause}</span>
-        ))}
-        {mission.orgVerified && <TrustBadge level="verified" />}
+        {mission.causes.map((cause) => <span key={cause.id} className="status-badge status-neutral">{cause.name}</span>)}
+        {isVerified && <TrustBadge level="verified" />}
       </div>
-      
-      <div className="mt-auto pt-2">
-        <Link to={`/missions/${mission.id}`} className="btn btn-primary btn-sm">
-          Voir l'offre
-        </Link>
-      </div>
+      <div className="mt-auto pt-2"><Link to={`/missions/${mission.slug}`} className="btn btn-primary btn-sm">Voir l'offre</Link></div>
     </article>
   );
 }

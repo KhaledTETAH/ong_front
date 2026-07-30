@@ -1,8 +1,6 @@
-import type { MecenatSubmission } from '@/types/mecenat';
+import type { MecenatSubmission, SponsorshipMission } from '@/types/mecenat';
+import { apiData } from './apiClient';
 
-export async function submitMecenat(data: MecenatSubmission): Promise<{ success: boolean }> {
-  // Simulate network delay
-  await new Promise(resolve => setTimeout(resolve, 500));
-  console.log('Mecenat submitted:', data);
-  return { success: true };
+export function submitMecenat(data: MecenatSubmission): Promise<SponsorshipMission> {
+  return apiData<SponsorshipMission>('sponsorship-missions/', { method: 'POST', body: data });
 }

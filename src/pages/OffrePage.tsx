@@ -1,160 +1,44 @@
-import { useParams, Link } from 'react-router-dom';
-import { Navbar } from '@/components/Navbar/Navbar';
+import { useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
+import { useMutation } from '@tanstack/react-query';
 import { Footer } from '@/components/Footer/Footer';
-import { TrustBadge } from '@/components/TrustBadge/TrustBadge';
 import { MissionCard } from '@/components/MissionCard/MissionCard';
-import { useMissions } from '@/hooks/useMissions';
+import { Navbar } from '@/components/Navbar/Navbar';
+import { TrustBadge } from '@/components/TrustBadge/TrustBadge';
+import { useAuthStore } from '@/context/authStore';
+import { useMission, useSimilarMissions } from '@/hooks/useMissions';
+import { applyToMission, removeSavedMission, saveMission, shareMission } from '@/services/missionsService';
+import { engagementTypeLabels, remoteModeLabels } from '@/types/mission';
 import { formatDate } from '@/utils/formatDate';
 
 export function OffrePage() {
-  const params = useParams();
-  const { data: missions = [], isLoading } = useMissions();
-  
-  const mission = missions.find(m => m.id === params.id) || missions[0]; // fallback to first if not found for mock preview
+  const { slug = '' } = useParams();
+  const navigate = useNavigate();
+  const accessToken = useAuthStore((state) => state.accessToken);
+  const user = useAuthStore((state) => state.user);
+  const { data: mission, isLoading, isError, error } = useMission(slug, accessToken);
+  const { data: similar = [] } = useSimilarMissions(slug);
+  const [message, setMessage] = useState<string | null>(null);
+  const action = useMutation({
+    mutationFn: async (kind: 'apply' | 'save' | 'unsave' | 'share') => {
+      if (!mission) throw new Error('Mission indisponible.');
+      if (kind === 'share') return shareMission(mission.slug, 'copy_link');
+      if (!accessToken) throw new Error('Connectez-vous pour effectuer cette action.');
+      if (kind === 'apply') return applyToMission(mission.slug, '', accessToken);
+      return kind === 'save' ? saveMission(mission.slug, accessToken) : removeSavedMission(mission.slug, accessToken);
+    },
+    onSuccess: (_, kind) => setMessage(kind === 'apply' ? 'Candidature envoyée.' : kind === 'share' ? 'Partage enregistré.' : 'Votre sélection a été mise à jour.'),
+  });
 
-  if (isLoading) {
-    return (
-      <>
-        <Navbar />
-        <main className="container py-5 text-center">
-          <p>Chargement de l'offre...</p>
-        </main>
-        <Footer />
-      </>
-    );
-  }
+  if (isLoading) return <><Navbar /><main className="container py-5 text-center"><p>Chargement de l'offre…</p></main><Footer /></>;
+  if (isError || !mission) return <><Navbar /><main className="container py-5 text-center"><h2>Offre introuvable</h2><p className="text-soft">{error instanceof Error ? error.message : 'Cette offre n’est plus disponible.'}</p><Link to="/missions" className="btn btn-primary mt-3">Retour aux missions</Link></main><Footer /></>;
 
-  if (!mission) {
-    return (
-      <>
-        <Navbar />
-        <main className="container py-5 text-center">
-          <h2>Offre introuvable</h2>
-          <Link to="/missions" className="btn btn-primary mt-3">Retour aux missions</Link>
-        </main>
-        <Footer />
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Navbar />
-      
-      <main id="contenu">
-        <div className="container">
-          <nav aria-label="Fil d'Ariane" className="pt-3">
-            <ol className="breadcrumb">
-              <li className="breadcrumb-item"><Link to="/">Accueil</Link></li>
-              <li className="breadcrumb-item"><Link to="/missions">Missions</Link></li>
-              <li className="breadcrumb-item active" aria-current="page">{mission.title}</li>
-            </ol>
-          </nav>
-        </div>
-
-        <section className="offre-hero" aria-labelledby="offre-title">
-          <div className="container">
-            <p className="eyebrow mb-1">Offre d'engagement</p>
-            <h1 id="offre-title">{mission.title}</h1>
-            <p className="offre-org mb-2">
-              <i className="bi bi-building" aria-hidden="true"></i>{' '}
-              <Link to="/annuaire">{mission.orgName}</Link>{' '}
-              {mission.orgVerified && <TrustBadge level="verified" />}
-            </p>
-            <div className="offre-meta">
-              <span><i className="bi bi-geo-alt" aria-hidden="true"></i> {mission.location}</span>
-              <span><i className="bi bi-briefcase" aria-hidden="true"></i> {mission.engagementType}</span>
-              <span><i className="bi bi-clock" aria-hidden="true"></i> {mission.duration}</span>
-              <span><i className="bi bi-easel" aria-hidden="true"></i> {mission.modality}</span>
-              <span><i className="bi bi-calendar-event" aria-hidden="true"></i> Publiée le {formatDate(mission.publishedAt)}</span>
-            </div>
-          </div>
-        </section>
-
-        <section className="app-section">
-          <div className="container">
-            <div className="row g-4">
-
-              {/* Description */}
-              <div className="col-lg-8">
-                <div className="card p-4">
-                  <div className="mb-3 d-flex gap-2">
-                    {mission.causes.map((cause, idx) => (
-                      <span key={idx} className="status-badge status-neutral">{cause}</span>
-                    ))}
-                  </div>
-
-                  <h2 className="h5">La mission</h2>
-                  <p>{mission.description}</p>
-                  
-                  <p>Au sein de l'organisation, cette mission implique de piloter et d'accompagner le développement des activités liées. Vous serez amené(e) à travailler en étroite collaboration avec les équipes sur le terrain.</p>
-
-                  <h2 className="h5 mt-4">Profil recherché</h2>
-                  <p>Expérience en coordination de projet ou en animation. Sens de l'organisation, autonomie et goût du travail en équipe. Une connaissance du secteur associatif est un plus.</p>
-
-                  <h2 className="h5 mt-4">Compétences requises</h2>
-                  <ul className="offre-list">
-                    <li><i className="bi bi-check2"></i> Coordination d'équipe et gestion de planning</li>
-                    <li><i className="bi bi-check2"></i> Communication et relation partenaires</li>
-                    <li><i className="bi bi-check2"></i> Capacité d'analyse et de synthèse</li>
-                  </ul>
-
-                  <div className="row g-3 mt-2">
-                    <div className="col-sm-6">
-                      <h3 className="h6 mb-1">Langues</h3>
-                      <p className="text-soft mb-0">Français, local</p>
-                    </div>
-                    <div className="col-sm-6">
-                      <h3 className="h6 mb-1">Conditions</h3>
-                      <p className="text-soft mb-0">{mission.engagementType} · {mission.modality}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Candidature + organisation */}
-              <div className="col-lg-4">
-                <div className="card apply-card p-4 mb-3">
-                  <p className="apply-lead mb-1">Cette mission vous intéresse ?</p>
-                  <p className="text-soft small mb-3">La candidature se fait en quelques clics depuis votre espace candidat.</p>
-                  <div className="d-grid gap-2">
-                    <Link to="/connexion" className="btn btn-primary btn-lg">Postuler</Link>
-                    <button className="btn btn-subtle"><i className="bi bi-bookmark"></i> Sauvegarder l'offre</button>
-                    <button className="btn btn-subtle"><i className="bi bi-share"></i> Partager</button>
-                  </div>
-                  <p className="text-soft small mt-3 mb-0"><i className="bi bi-shield-check"></i> Vos échanges restent sur la plateforme.</p>
-                </div>
-
-                <div className="card p-3">
-                  <div className="d-flex align-items-center gap-3 mb-2">
-                    <span className="ong-logo-sm" aria-hidden="true">{mission.orgInitials}</span>
-                    <div>
-                      <p className="fw-bold mb-0">{mission.orgName}</p>
-                      {mission.orgVerified && <TrustBadge level="verified" />}
-                    </div>
-                  </div>
-                  <p className="text-soft small mb-2">Engagée pour ses causes.</p>
-                  <Link to="/annuaire" className="btn btn-outline-primary btn-sm w-100">Voir le profil de l'organisation</Link>
-                </div>
-              </div>
-
-            </div>
-
-            {/* Offres similaires */}
-            <h2 className="h5 mt-5 mb-3">Missions similaires</h2>
-            <div className="row g-3">
-              {missions.filter(m => m.id !== mission.id && m.causes.some(c => mission.causes.includes(c))).slice(0, 3).map(sim => (
-                <div className="col-md-4" key={sim.id}>
-                  <MissionCard mission={sim} />
-                </div>
-              ))}
-            </div>
-
-          </div>
-        </section>
-      </main>
-
-      <Footer />
-    </>
-  );
+  const isVerified = ['verified', 'certified_plus'].includes(mission.organization.verification_status);
+  const canApply = user?.role === 'candidate';
+  return <><Navbar /><main id="contenu"><div className="container"><nav aria-label="Fil d'Ariane" className="pt-3"><ol className="breadcrumb"><li className="breadcrumb-item"><Link to="/">Accueil</Link></li><li className="breadcrumb-item"><Link to="/missions">Missions</Link></li><li className="breadcrumb-item active" aria-current="page">{mission.title}</li></ol></nav></div>
+    <section className="offre-hero"><div className="container"><p className="eyebrow mb-1">Offre d'engagement</p><h1>{mission.title}</h1><p className="offre-org mb-2"><i className="bi bi-building" /> <Link to="/annuaire">{mission.organization.name}</Link> {isVerified && <TrustBadge level="verified" />}</p><div className="offre-meta"><span><i className="bi bi-geo-alt" /> {mission.city}, {mission.country.name_fr}</span><span><i className="bi bi-briefcase" /> {engagementTypeLabels[mission.engagement_type]}</span><span><i className="bi bi-clock" /> {mission.duration_label || 'Durée à définir'}</span><span><i className="bi bi-easel" /> {remoteModeLabels[mission.remote_mode]}</span><span><i className="bi bi-calendar-event" /> Publiée le {formatDate(mission.published_at)}</span></div></div></section>
+    <section className="app-section"><div className="container"><div className="row g-4"><div className="col-lg-8"><div className="card p-4"><div className="mb-3 d-flex gap-2 flex-wrap">{mission.causes.map((cause) => <span key={cause.id} className="status-badge status-neutral">{cause.name}</span>)}</div><h2 className="h5">La mission</h2><p>{mission.description}</p>{mission.responsibilities && <><h2 className="h5 mt-4">Responsabilités</h2><p>{mission.responsibilities}</p></>}{mission.desired_profile && <><h2 className="h5 mt-4">Profil recherché</h2><p>{mission.desired_profile}</p></>}{mission.skills.length > 0 && <><h2 className="h5 mt-4">Compétences</h2><ul className="offre-list">{mission.skills.map((skill) => <li key={skill.id}><i className="bi bi-check2" /> {skill.name}</li>)}</ul></>}{mission.conditions && <><h2 className="h5 mt-4">Conditions</h2><p>{mission.conditions}</p></>}</div></div>
+      <div className="col-lg-4"><div className="card apply-card p-4 mb-3"><p className="apply-lead mb-1">Cette mission vous intéresse ?</p>{message && <div className="alert alert-success py-2">{message}</div>}{action.isError && <div className="alert alert-danger py-2">{action.error instanceof Error ? action.error.message : 'Action impossible.'}</div>}<div className="d-grid gap-2"><button className="btn btn-primary btn-lg" disabled={action.isPending} onClick={() => { if (!accessToken) navigate('/connexion'); else if (!canApply) setMessage('Seuls les comptes candidats peuvent postuler.'); else action.mutate('apply'); }}>Postuler</button><button className="btn btn-subtle" disabled={action.isPending} onClick={() => action.mutate(mission.is_saved ? 'unsave' : 'save')}><i className="bi bi-bookmark" /> {mission.is_saved ? 'Retirer des sauvegardes' : 'Sauvegarder l’offre'}</button><button className="btn btn-subtle" disabled={action.isPending} onClick={() => action.mutate('share')}><i className="bi bi-share" /> Partager</button></div></div>
+      <div className="card p-3"><p className="fw-bold mb-1">{mission.organization.name}</p><p className="text-soft small mb-2">{mission.organization.description}</p><Link to="/annuaire" className="btn btn-outline-primary btn-sm w-100">Voir les organisations</Link></div></div></div>
+      {similar.length > 0 && <><h2 className="h5 mt-5 mb-3">Missions similaires</h2><div className="row g-3">{similar.slice(0, 3).map((offer) => <div className="col-md-4" key={offer.id}><MissionCard mission={offer} /></div>)}</div></>}</div></section></main><Footer /></>;
 }
