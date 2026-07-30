@@ -34,4 +34,5 @@ export interface SponsorshipMission {
   status: 'pending_email_verification' | 'submitted';
   verified_email_at: string | null;
   created_at: string;
+  debug_verification_token?: string;
 }
