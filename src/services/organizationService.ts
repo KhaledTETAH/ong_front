@@ -1,6 +1,6 @@
 import api from "./axiosClient";
 import type { ApiSuccessResponse } from "@/types/api";
-import type { Organization } from "@/types/organization";
+import type { Organization, OrganizationDetail } from "@/types/organization";
 
 export const organizationService = {
   async getAllOrganizations() {
@@ -10,7 +10,7 @@ export const organizationService = {
   },
 
   async getOrganizationById(id: string) {
-    const response = await api.get<ApiSuccessResponse<Organization>>(
+    const response = await api.get<ApiSuccessResponse<OrganizationDetail>>(
       `/organizations/${id}/`,
     );
     return response.data.data;

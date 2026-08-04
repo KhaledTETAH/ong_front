@@ -1,16 +1,20 @@
-import { useQuery } from "@tanstack/react-query";
-import { organizationService } from "@/services/organizationService";
+import { useQuery } from '@tanstack/react-query';
+import type { OrganizationFilters } from '@/services/organizationsService';
+import { getOrganizations } from '@/services/organizationsService';
+import { organizationService } from '@/services/organizationService';
 
-export function useOrganizations() {
+// Directory listing with filters (pages 1-6).
+export function useOrganizations(filters: OrganizationFilters = {}) {
   return useQuery({
-    queryKey: ["organizations"],
-    queryFn: () => organizationService.getAllOrganizations(),
+    queryKey: ['organizations', filters],
+    queryFn: () => getOrganizations(filters),
   });
 }
 
+// Single organization by id (organization profile page).
 export function useOrganization(id: string) {
   return useQuery({
-    queryKey: ["organization", id],
+    queryKey: ['organization', id],
     queryFn: () => organizationService.getOrganizationById(id),
     enabled: !!id,
   });

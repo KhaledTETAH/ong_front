@@ -1,10 +1,7 @@
-import { Link, useParams } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useOrganization } from "@/hooks/useOrganizations";
-import { VerificationStatus } from "@/types/organization";
 
 export default function OngProfilePage() {
-  // const { id } = useParams();
-
   const {
     data: organization,
     isPending,
@@ -57,10 +54,8 @@ export default function OngProfilePage() {
             <div className="ong-hero-main">
               <h1 id="ong-name">{organization.name}</h1>
               <p className="ong-hero-meta">
-                {(organization.verification_status ===
-                  VerificationStatus.VERIFIED ||
-                  organization.verification_status ===
-                    VerificationStatus.CERTIFIED_PLUS) && (
+                {(organization.verification_status === "verified" ||
+                  organization.verification_status === "certified_plus") && (
                   <span>
                     <i className="bi bi-patch-check-fill"></i> Organisation
                     vérifiée
@@ -68,7 +63,7 @@ export default function OngProfilePage() {
                 )}
                 <span>
                   <i className="bi bi-geo-alt"></i> {organization.city},{" "}
-                  {organization.country}
+                  {organization.country.name_fr}
                 </span>
                 <span>
                   <i className="bi bi-building"></i> {organization.type} · RNA{" "}
@@ -77,8 +72,8 @@ export default function OngProfilePage() {
               </p>
               <div className="ong-tags">
                 {organization.causes.map((cause) => (
-                  <span className="tag" key={cause}>
-                    {cause}
+                  <span className="tag" key={cause.id}>
+                    {cause.name}
                   </span>
                 ))}
               </div>
@@ -158,7 +153,9 @@ export default function OngProfilePage() {
                   </li>
                   <li>
                     <span>Causes</span>
-                    <strong>{organization.causes.join(", ")}</strong>
+                    <strong>
+                      {organization.causes.map((c) => c.name).join(", ")}
+                    </strong>
                   </li>
                 </ul>
               </div>
@@ -186,10 +183,8 @@ export default function OngProfilePage() {
                 </p>
               </div>
 
-              {(organization.verification_status ===
-                VerificationStatus.VERIFIED ||
-                organization.verification_status ===
-                  VerificationStatus.CERTIFIED_PLUS) && (
+              {(organization.verification_status === "verified" ||
+                organization.verification_status === "certified_plus") && (
                 <div className="notice notice-info">
                   <i className="bi bi-shield-check"></i>
                   <div className="notice-body">
