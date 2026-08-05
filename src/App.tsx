@@ -1,16 +1,22 @@
-import Button from 'react-bootstrap/Button'
-import Container from 'react-bootstrap/Container'
-
+import MessageriePage from './pages/MessageriePage'
+import PortfolioPage from './pages/PortfolioPage'
+import OffersPage from './pages/OffersPage'
+import {Routes,Route} from 'react-router-dom'
 function App() {
   return (
-    <Container className="py-5 text-center">
-      <h1>ONG — Front</h1>
-      <p className="text-muted">
-        Bootstrap est prêt. Développez dans <code>src/</code> en suivant
-        l&apos;organisation décrite dans le <code>README.md</code>.
-      </p>
-      <Button variant="primary">Faire un don</Button>
-    </Container>
+   <> 
+    
+     <Routes>
+      <Route path="/portfolio" element={<PortfolioPage/>} />
+      <Route path="/messagerie" element={<MessageriePage />} />
+      <Route path="/offers" element={<OffersPage/>} />
+
+   
+    </Routes>
+  </>
+
+   
+   
   )
 }
 
