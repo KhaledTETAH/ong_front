@@ -1,11 +1,9 @@
 import { Share2 } from 'lucide-react';
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
 import StatsCard from '../components/StatsCard';
 import SkillsList from '../components/SkillsList';
 import MissionTimeline from '../components/MissionTimeline';
-import ConversationItem from '@/components/ConversationItem';
-import Container from 'react-bootstrap/Container'
+import Container from 'react-bootstrap/Container';
 import SidebarNav from '../components/SidebarNav';
 
 export default function PortfolioPage() {

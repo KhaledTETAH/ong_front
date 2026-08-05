@@ -1,5 +1,4 @@
 import ProfileCard from './ProfileCard';
-import SidebarNav from './SidebarNav';
 
 export default function Sidebar() {
   return (

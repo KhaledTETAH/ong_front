@@ -1,5 +1,4 @@
 import Header from '../components/Header';
-import Sidebar from '../components/Sidebar';
 import ConversationList from '../components/ConversationList';
 import ChatWindow from '../components/ChatWindow';
 import Container from 'react-bootstrap/Container'

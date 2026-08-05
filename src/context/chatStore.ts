@@ -17,7 +17,7 @@ interface ChatStore {
   setWsConnected: (connected: boolean) => void;
 }
 
-export const useChatStore = create<ChatStore>((set, get) => ({
+export const useChatStore = create<ChatStore>((set) => ({
   conversations: [],
   messages: {},
   activeConversationId: null,
