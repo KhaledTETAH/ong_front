@@ -2,6 +2,7 @@ import { FileText, Search, FolderOpen, MessageCircle} from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useState ,useEffect} from 'react';
+
 interface NavItem {
   icon: LucideIcon;
   label: string;
@@ -33,6 +34,7 @@ export default function SidebarNav({link}: { link: string }) {
       ...navItem, active: navItem.label === item.label
     })));
   }
+
   return (
     <div className="list-group">
       {navItems.map((item, idx) => {

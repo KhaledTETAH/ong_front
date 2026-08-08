@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import Header from '../components//Header';
 import ProfileCard from '../components//ProfileCard';
 import SidebarNav from '../components//SidebarNav';
@@ -7,57 +7,35 @@ import FilterBar from '../components//FilterBar';
 import OffersList, { type Offer } from '../components//OffersList';
 import AlertCTA from '../components//AlertCTA';
 import Container from 'react-bootstrap/Container'
-const initialOffers: Offer[] = [
-  {
-    id: 1,
-    org: 'Fondation Horizon Solidaire',
-    compatibility: 95,
-    title: 'Chef de projet éducation numérique',
-    location: 'Alger, Algérie',
-    duration: '8 mois',
-    contractType: 'Salariat',
-    isSaved: false,
-  },
-  {
-    id: 2,
-    org: 'Association Lumière d\'Oran',
-    compatibility: 88,
-    title: 'Animateur solidarité — programme jeunesse',
-    location: 'Oran, Algérie',
-    duration: 'Récurrent',
-    contractType: 'Bénévolat',
-    isSaved: true,
-  },
-  {
-    id: 3,
-    org: 'ONG Racines & Avenir',
-    compatibility: 74,
-    title: 'Coordinateur pédagogique éducation',
-    location: 'Casablanca, Maroc',
-    duration: '12 mois',
-    contractType: 'Salariat',
-    isSaved: false,
-  },
-  {
-    id: 4,
-    org: 'Waqf El Baraka',
-    compatibility: 70,
-    title: 'Membre de comité — éducation et jeunesse',
-    location: 'Tunis, Tunisie',
-    duration: 'Mandat 2 ans',
-    contractType: 'Gouvernance',
-    isSaved: false,
-  },
-];
+const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000/api/v1').replace(/\/$/, '');
 
+
+import {useOfferStore }from '@/context/offerStore';
 export default function OffresPage() {
-  const [offers, setOffers] = useState<Offer[]>(initialOffers);
+const urls = [`${API_BASE_URL}/offers/`, `${API_BASE_URL}/conversations/`];
+    const { offer, setOffer} = useOfferStore();
+useEffect(() => {
+  const fetchOffers = async () => {
+    try {
+      const response = await fetch(urls[0], {
+        method: 'GET',
+      });
 
-  const handleToggleSave = (id: number) => {
-    setOffers((prev) =>
-      prev.map((o) => (o.id === id ? { ...o, isSaved: !o.isSaved } : o))
-    );
+      setOffer( await response.json());
+    } catch (error) {
+      console.error(error);
+    }
   };
+
+  fetchOffers();
+}, [setOffer]);
+
+//   const [offers, setOffers] = useState<Offer[]>(initialOffers);
+ const handleToggleSave = (_id: number) => {
+    /*  setOffers((prev) =>
+      prev.map((o) => (o.id === id ? { ...o, isSaved: !o.isSaved } : o))
+    );*/
+  }; 
 
   const handleApply = (id: number) => {
     // TODO: wire to backend / router
@@ -91,7 +69,7 @@ export default function OffresPage() {
             <div className="d-flex flex-column gap-3">
               <ProfileCard />
               <AdjustButton />
-                <SidebarNav   link="/offers"/>
+                <SidebarNav   link="/offers" />
              
             </div>
           </div>
@@ -101,7 +79,7 @@ export default function OffresPage() {
             <div className="d-flex flex-column gap-4">
               <FilterBar keyword="éducation" />
               <OffersList
-                offers={offers}
+                offers={offer as Offer[] | null}
                 searchTerm="éducation"
                 onApply={handleApply}
                 onToggleSave={handleToggleSave}

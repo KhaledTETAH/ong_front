@@ -42,3 +42,5 @@ export interface OngProfile {
 
   offres: Offer[];
 }
+
+

@@ -1,14 +1,15 @@
-import Header from '../components/Header';
 import ConversationList from '../components/ConversationList';
 import ChatWindow from '../components/ChatWindow';
 import Container from 'react-bootstrap/Container'
 import SidebarNav from '../components/SidebarNav';
 import {useState} from 'react'
+import { Navbar } from '@/components/Navbar/Navbar';
+
 export default function MessageriePage() {
     const [selectedId, setSelectedId] = useState<string >("21d60cbe-2356-4391-a32e-51ef21d3c74b");
   return (
     <div className="min-vh-100 d-flex flex-column" style={{ backgroundColor: '#f5f5f0' }}>
-      <Header />
+<Navbar/>
 <Container>
       <main className="container-fluid flex-grow-1 px-4 py-4">
         <div className="mb-4">

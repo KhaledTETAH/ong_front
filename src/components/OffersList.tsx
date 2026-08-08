@@ -4,7 +4,7 @@ import JobCard from './JobCard';
 export interface Offer {
   id: number;
   org: string;
-  compatibility: number;
+  compatibility:{score:number} ;
   title: string;
   location: string;
   duration: string;
@@ -13,8 +13,8 @@ export interface Offer {
 }
 
 interface OffersListProps {
-  offers: Offer[];
-  searchTerm?: string;
+  offers: Offer[] |null ; // the ? just for now to run the code, we will remove it when we have the api workin
+  searchTerm?:string;
   onApply: (id: number) => void;
   onToggleSave: (id: number) => void;
 }
@@ -24,7 +24,7 @@ export default function OffersList({ offers, searchTerm, onApply, onToggleSave }
     <div>
       <div className="d-flex align-items-center justify-content-between mb-3">
         <h2 className="fs-6 fw-bold text-dark mb-0">
-          {offers.length} offres correspondent à votre fiche
+          {offers?.length ||0} offres correspondent à votre fiche
         </h2>
         <button className="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1">
           <Bell size={14} />
@@ -33,11 +33,11 @@ export default function OffersList({ offers, searchTerm, onApply, onToggleSave }
       </div>
 
       <div className="row g-3">
-        {offers.map((offer) => (
+        {offers?.map((offer) => (
           <div key={offer.id} className="col-md-6">
             <JobCard
               org={offer.org}
-              compatibility={offer.compatibility}
+              compatibility={offer.compatibility.score}
               title={offer.title}
               highlight={searchTerm}
               location={offer.location}
