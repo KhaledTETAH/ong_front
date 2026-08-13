@@ -4,6 +4,10 @@ import {
   PublicLayout,
 } from "@/components/Layout/Layout";
 
+import MessageriePage from './pages/MessageriePage';
+import PortfolioPage from './pages/PortfolioPage';
+import OffersPage from './pages/OffersPage';
+
 // Pages 1-6 (rafa) — self-contained public pages
 import { AnnuairePage } from "./pages/AnnuairePage";
 import { LoginPage } from "./pages/LoginPage";
@@ -20,7 +24,7 @@ import EspaceCandidatPage from "./pages/EspaceCandidatPage";
 import OngProfilePage from "./pages/OngProfilePage";
 import FicheCandidatPage from "./pages/FicheCandidatPage";
 
-export default function App() {
+function App() {
   return (
     <BrowserRouter>
       <Routes>
@@ -46,9 +50,15 @@ export default function App() {
           <Route path="/candidat/fiche" element={<FicheCandidatPage />} />
         </Route>
 
+        <Route path="/portfolio" element={<PortfolioPage />} />
+        <Route path="/messagerie" element={<MessageriePage />} />
+        <Route path="/offers" element={<OffersPage />} />
+
         {/* --- fallback --- */}
         <Route path="*" element={<div>404 - Page non trouvée</div>} />
       </Routes>
     </BrowserRouter>
   );
 }
+
+export default App;
