@@ -1,8 +1,25 @@
-import { Outlet } from "react-router-dom";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { useAuthStore } from "@/context/authStore";
 import CandidateHeader from "../CandidateHeader/CandidateHeader";
 import FullFooter from "../FullFooter/FullFooter";
 import SimpleFooter from "../SimpleFooter/SimpleFooter";
 import { Navbar } from "../Navbar/Navbar";
+
+// Guards candidate-only routes: requires an authenticated candidate or redirects.
+export function RequireCandidate() {
+  const user = useAuthStore((s) => s.user);
+  const location = useLocation();
+
+  if (!user) {
+    return <Navigate to="/connexion" state={{ from: location }} replace />;
+  }
+
+  if (user.role !== "candidate") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <Outlet />;
+}
 
 // Candidate Dashboard Layout
 export function CandidateLayout() {
