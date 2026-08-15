@@ -69,7 +69,7 @@ api.interceptors.response.use(
     // 3. Throw Network Error Fallback
     return Promise.reject({
       success: false,
-      status: 0,
+      status_code: 0,
       code: "NETWORK_ERROR",
       message: "Network error or server unreachable.",
       errors: null,

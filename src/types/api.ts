@@ -16,7 +16,7 @@ export interface ApiSuccessResponse<T> {
 
 export interface ApiErrorResponse {
   success: false;
-  status: number;
+  status_code: number;
   code: string; // e.g., "NOT_FOUND", "VALIDATION_ERROR", "INTERNAL_SERVER_ERROR"
   message: string;
   errors: Record<string, unknown> | null; // Field-level errors (e.g., { "email": ["This field is required."] })
