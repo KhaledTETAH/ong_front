@@ -32,12 +32,18 @@ export default function EspaceCandidatPage() {
   if (isError) return <p>Erreur : {error?.message || "Une erreur est survenue"}</p>;
   if (!data) return null;
 
-  const stats = {
-    candidatures: data.applications_count,
-    offresSauvegardees: data.saved_offers_count,
-    missionsVerifiees: data.verified_missions_count,
-    messagesNonLus: data.unread_messages_count,
-  };
+  const stats = [
+    { label: "Candidatures", value: data.applications_count },
+    ...(data.saved_offers_count !== undefined
+      ? [{ label: "Offres sauvegardées", value: data.saved_offers_count }]
+      : []),
+    ...(data.verified_missions_count !== undefined
+      ? [{ label: "Missions vérifiées", value: data.verified_missions_count }]
+      : []),
+    ...(data.unread_messages_count !== undefined
+      ? [{ label: "Messages", value: data.unread_messages_count }]
+      : []),
+  ];
 
   const candidatures: DisplayApplication[] = data.applications.map((a) => {
     const meta = STAGE_META[a.stage] ?? STAGE_META.submitted;
@@ -70,30 +76,14 @@ export default function EspaceCandidatPage() {
 
           <div className="candidate-content">
             <div className="row g-3 mb-4">
-              <div className="col-6 col-lg-3">
-                <div className="card stat-card p-3">
-                  <p className="stat-label mb-1">Candidatures</p>
-                  <p className="stat-value mb-0">{stats.candidatures}</p>
+              {stats.map((s) => (
+                <div className="col-6 col-lg-3" key={s.label}>
+                  <div className="card stat-card p-3">
+                    <p className="stat-label mb-1">{s.label}</p>
+                    <p className="stat-value mb-0">{s.value}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="col-6 col-lg-3">
-                <div className="card stat-card p-3">
-                  <p className="stat-label mb-1">Offres sauvegardées</p>
-                  <p className="stat-value mb-0">{stats.offresSauvegardees}</p>
-                </div>
-              </div>
-              <div className="col-6 col-lg-3">
-                <div className="card stat-card p-3">
-                  <p className="stat-label mb-1">Missions vérifiées</p>
-                  <p className="stat-value mb-0">{stats.missionsVerifiees}</p>
-                </div>
-              </div>
-              <div className="col-6 col-lg-3">
-                <div className="card stat-card p-3">
-                  <p className="stat-label mb-1">Messages</p>
-                  <p className="stat-value mb-0">{stats.messagesNonLus}</p>
-                </div>
-              </div>
+              ))}
             </div>
 
             {tracked && (

@@ -88,8 +88,9 @@ export interface CandidateDashboard {
   last_name: string;
   email: string;
   applications_count: number;
-  saved_offers_count: number;
-  verified_missions_count: number;
-  unread_messages_count: number;
   applications: Application[];
+  // Optional: only present when the backend can compute them.
+  saved_offers_count?: number;
+  verified_missions_count?: number;
+  unread_messages_count?: number;
 }
