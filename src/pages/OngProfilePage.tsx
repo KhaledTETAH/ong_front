@@ -147,10 +147,11 @@ export default function OngProfilePage() {
                       <strong>{organization.founded_year}</strong>
                     </li>
                   )}
-                  {/* Note: "Bénévoles" count isn't in the API yet, so I removed it to avoid confusion */}
                   <li>
                     <span>Offres ouvertes</span>
-                    <strong>{organization.offers.length}</strong>
+                    <strong>
+                      {organization.open_offers_count ?? organization.offers.length}
+                    </strong>
                   </li>
                   <li>
                     <span>Causes</span>
@@ -163,25 +164,19 @@ export default function OngProfilePage() {
 
               <div className="card p-3 mb-3">
                 <h2 className="h6">Transparence</h2>
-                {/* Note: documentsTransparence isn't in the API yet. 
-                    I've hardcoded the 3 expected items for the UI. 
-                    You'll need to add `documents` to the OrganizationSerializer later. */}
-                <ul className="ong-docs">
-                  <li>
-                    <i className="bi bi-file-earmark-check"></i> Statuts déposés
-                  </li>
-                  <li>
-                    <i className="bi bi-file-earmark-check"></i> Déclaration
-                    officielle (RNA)
-                  </li>
-                  <li>
-                    <i className="bi bi-file-earmark-check"></i> Dernier rapport
-                    d'activité
-                  </li>
+                <ul className="ong-docs mb-0">
+                  {organization.documents.length > 0 ? (
+                    organization.documents.map((doc) => (
+                      <li key={doc.id}>
+                        <i className="bi bi-file-earmark-check"></i> {doc.label}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-soft small">
+                      Documents contrôlés lors de la vérification documentaire.
+                    </li>
+                  )}
                 </ul>
-                <p className="text-soft small mb-0">
-                  Documents contrôlés lors de la vérification documentaire.
-                </p>
               </div>
 
               {(organization.verification_status === "verified" ||

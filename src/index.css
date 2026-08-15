@@ -1120,6 +1120,14 @@ mark.kw { background: var(--color-accent-soft); color: var(--color-text); paddin
 }
 .user-menu-email { margin: 0; overflow-wrap: anywhere; font-weight: 700; }
 .user-menu-role { margin: 2px 0 var(--space-3); color: var(--color-text-muted); font-size: .88rem; }
+.user-menu-link {
+  display: block;
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  color: var(--color-text);
+  font-weight: 600;
+}
+.user-menu-link:hover { background: var(--color-primary-soft); color: var(--color-primary-dark); }
 .user-menu-logout,
 .mobile-nav-logout {
   width: 100%;
@@ -1131,6 +1139,7 @@ mark.kw { background: var(--color-accent-soft); color: var(--color-text); paddin
   text-align: left;
   font: inherit;
   font-weight: 600;
+  margin-top: var(--space-2);
 }
 .user-menu-logout:hover,
 .mobile-nav-logout:hover { background: #fbe4e1; }

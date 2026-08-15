@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useCandidatDashboard } from "@/hooks/useCandidat";
 
 interface CandidateSidebarProps {
   active: "candidatures" | "fiche" | "offres" | "portfolio" | "messagerie";
@@ -9,6 +10,8 @@ export default function CandidateSidebar({
   active,
   showCta = false,
 }: CandidateSidebarProps) {
+  const { data: dashboard } = useCandidatDashboard();
+
   const links = [
     {
       key: "candidatures",
@@ -34,6 +37,10 @@ export default function CandidateSidebar({
     { key: "messagerie", icon: "bi-chat-dots", label: "Messagerie" },
   ] as const;
 
+  const firstName = dashboard?.first_name ?? "";
+  const lastName = dashboard?.last_name ?? "";
+  const initials = `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+
   return (
     <aside
       className="candidate-sidebar"
@@ -42,36 +49,22 @@ export default function CandidateSidebar({
       <div className="card profile-card p-3">
         <div className="profile-top">
           <span className="avatar" aria-hidden="true">
-            YB
+            {initials || "·"}
           </span>
           <div>
-            <p className="profile-name mb-0">Yasmine Benali</p>
-            <span className="trust-badge">
-              <i className="bi bi-patch-check"></i> Profil expert
-            </span>
-          </div>
-        </div>
-        <div
-          className="profile-progress"
-          aria-label="Complétude du profil : 80 %"
-        >
-          <div className="d-flex justify-content-between small">
-            <span className="text-soft">Profil complété</span>
-            <span className="fw-semibold">80 %</span>
-          </div>
-          <div
-            className="progress mt-1"
-            role="progressbar"
-            aria-valuenow={80}
-            aria-valuemin={0}
-            aria-valuemax={100}
-          >
-            <div className="progress-bar" style={{ width: "80%" }}></div>
+            <p className="profile-name mb-0">
+              {`${firstName} ${lastName}`.trim() || "Candidat"}
+            </p>
+            {dashboard?.email && (
+              <span className="trust-badge">
+                <i className="bi bi-envelope"></i> {dashboard.email}
+              </span>
+            )}
           </div>
         </div>
         {showCta && (
           <Link
-            to="/candidat-fiche"
+            to="/candidat/fiche"
             className="btn btn-primary btn-sm w-100 mt-3"
           >
             <i className="bi bi-briefcase"></i> Compléter ma fiche

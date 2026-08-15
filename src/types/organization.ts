@@ -35,4 +35,14 @@ export interface OrganizationDetail extends Organization {
   logo_url?: string;
   banner_url?: string;
   founded_year?: number | null;
+  number_of_volunteers?: number | null;
+  documents: OrganizationDocument[];
+}
+
+export interface OrganizationDocument {
+  id: string;
+  label: string;
+  document_type: string;
+  file_url: string;
+  verified: boolean;
 }
