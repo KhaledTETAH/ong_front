@@ -10,7 +10,6 @@ import { LoginPage } from "./pages/LoginPage";
 import { MecenatPage } from "./pages/MecenatPage";
 import { MissionsPage } from "./pages/MissionsPage";
 import { OffrePage } from "./pages/OffrePage";
-import { OrganizationPage } from "./pages/OrganizationPage";
 import { PortailPage } from "./pages/PortailPage";
 import { RegisterPage } from "./pages/RegisterPage";
 import { SponsorshipTrackingPage } from "./pages/SponsorshipTrackingPage";
@@ -31,12 +30,12 @@ export default function App() {
         <Route path="/missions" element={<MissionsPage />} />
         <Route path="/missions/:slug" element={<OffrePage />} />
         <Route path="/annuaire" element={<AnnuairePage />} />
-        <Route path="/annuaire/:slug" element={<OrganizationPage />} />
         <Route path="/mecenat" element={<MecenatPage />} />
         <Route path="/mecenat/suivi" element={<SponsorshipTrackingPage />} />
 
         {/* --- pages using the shared public layout --- */}
         <Route element={<PublicLayout />}>
+          <Route path="/annuaire/:slug" element={<OngProfilePage />} />
           <Route path="/ong-profile/:id" element={<OngProfilePage />} />
         </Route>
 

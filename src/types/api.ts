@@ -19,7 +19,7 @@ export interface ApiErrorResponse {
   status: number;
   code: string; // e.g., "NOT_FOUND", "VALIDATION_ERROR", "INTERNAL_SERVER_ERROR"
   message: string;
-  errors: Record<string, any> | null; // Field-level errors (e.g., { "email": ["This field is required."] })
+  errors: Record<string, unknown> | null; // Field-level errors (e.g., { "email": ["This field is required."] })
   meta: {
     error_id: string; // UUID for tracking
     timestamp: string; // ISO 8601 string

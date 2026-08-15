@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import CandidateHeader from "../CandidateHeader/CandidateHeader";
 import FullFooter from "../FullFooter/FullFooter";
 import SimpleFooter from "../SimpleFooter/SimpleFooter";
-import PublicHeader from "../PublicHeader/PublicHeader";
+import { Navbar } from "../Navbar/Navbar";
 
 // Candidate Dashboard Layout
 export function CandidateLayout() {
@@ -19,7 +19,7 @@ export function CandidateLayout() {
 export function PublicLayout() {
   return (
     <div className="d-flex flex-column min-vh-100">
-      <PublicHeader />
+      <Navbar />
 
       <main className="grow">
         <Outlet />
@@ -34,7 +34,7 @@ export function PublicLayout() {
 export function AuthLayout() {
   return (
     <div className="d-flex flex-column min-vh-100">
-      <PublicHeader />
+      <Navbar />
 
       <main className="grow d-flex align-items-center py-5">
         <div className="container">

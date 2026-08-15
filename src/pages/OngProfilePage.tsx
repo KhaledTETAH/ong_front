@@ -1,14 +1,15 @@
 import { Link, useParams } from "react-router-dom";
-import { useOrganization } from "@/hooks/useOrganizations";
+import { useOrganizationBySlug } from "@/hooks/useOrganizations";
+import { engagementTypeLabels } from "@/types/mission";
 
 export default function OngProfilePage() {
-  const { id } = useParams<{ id: string }>();
+  const { slug } = useParams<{ slug: string }>();
   const {
     data: organization,
     isPending,
     isError,
     error,
-  } = useOrganization(id ?? "");
+  } = useOrganizationBySlug(slug ?? "");
 
   if (isPending) return <p>Chargement...</p>;
   if (isError)
@@ -115,14 +116,16 @@ export default function OngProfilePage() {
                       <h3>{o.title}</h3>
                       <div className="offer-meta">
                         <span>
-                          <i className="bi bi-geo-alt"></i> {o.city}
+                          <i className="bi bi-geo-alt"></i>{" "}
+                          {[o.city, o.country?.name_fr].filter(Boolean).join(", ")}
                         </span>
                         <span>
-                          <i className="bi bi-clock"></i> {o.duration_label}
+                          <i className="bi bi-clock"></i>{" "}
+                          {o.duration_label || "Durée à définir"}
                         </span>
                         <span>
                           <i className="bi bi-briefcase"></i>{" "}
-                          {o.engagement_type}
+                          {engagementTypeLabels[o.engagement_type]}
                         </span>
                       </div>
                       <a
@@ -145,6 +148,12 @@ export default function OngProfilePage() {
                     <li>
                       <span>Fondée en</span>
                       <strong>{organization.founded_year}</strong>
+                    </li>
+                  )}
+                  {organization.number_of_volunteers != null && (
+                    <li>
+                      <span>Bénévoles</span>
+                      <strong>{organization.number_of_volunteers}</strong>
                     </li>
                   )}
                   <li>

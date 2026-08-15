@@ -15,8 +15,6 @@ export default function CandidateHeader() {
   const refreshToken = useAuthStore((s) => s.refreshToken);
   const clearSession = useAuthStore((s) => s.clearSession);
 
-  const displayName = user?.email?.charAt(0).toUpperCase() || "·";
-
   async function handleLogout() {
     try {
       if (accessToken && refreshToken) await logout(refreshToken, accessToken);

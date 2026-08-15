@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import type { OrganizationFilters } from '@/services/organizationsService';
-import { getOrganizations } from '@/services/organizationsService';
+import { getOrganization, getOrganizations } from '@/services/organizationsService';
 import { organizationService } from '@/services/organizationService';
 
 // Directory listing with filters (pages 1-6).
@@ -17,5 +17,14 @@ export function useOrganization(id: string) {
     queryKey: ['organization', id],
     queryFn: () => organizationService.getOrganizationById(id),
     enabled: !!id,
+  });
+}
+
+// Single organization by slug (public profile from the annuaire).
+export function useOrganizationBySlug(slug: string) {
+  return useQuery({
+    queryKey: ['organization', slug],
+    queryFn: () => getOrganization(slug),
+    enabled: !!slug,
   });
 }
