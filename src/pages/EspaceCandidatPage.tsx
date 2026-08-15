@@ -33,16 +33,10 @@ export default function EspaceCandidatPage() {
   if (!data) return null;
 
   const stats = [
-    { label: "Candidatures", value: data.applications_count },
-    ...(data.saved_offers_count !== undefined
-      ? [{ label: "Offres sauvegardées", value: data.saved_offers_count }]
-      : []),
-    ...(data.verified_missions_count !== undefined
-      ? [{ label: "Missions vérifiées", value: data.verified_missions_count }]
-      : []),
-    ...(data.unread_messages_count !== undefined
-      ? [{ label: "Messages", value: data.unread_messages_count }]
-      : []),
+    { label: "Candidatures", value: data.applications_count ?? 0 },
+    { label: "Offres sauvegardées", value: data.saved_offers_count ?? 0 },
+    { label: "Missions vérifiées", value: data.verified_missions_count ?? 0 },
+    { label: "Messages", value: data.unread_messages_count ?? 0 },
   ];
 
   const candidatures: DisplayApplication[] = data.applications.map((a) => {
