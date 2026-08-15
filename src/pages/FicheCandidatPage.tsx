@@ -1,15 +1,46 @@
 import { Link } from "react-router-dom";
 import CandidateSidebar from "@/components/CandidateSidebar/CandidateSidebar";
-import { useCandidat } from "@/hooks/useCandidat";
+import type { DesiredPosition } from "@/types/candidat";
+import { useDesiredPosition, useUpdateDesiredPosition } from "@/hooks/useCandidat";
+
+const ENGAGEMENT_OPTIONS = [
+  { value: "volunteering", label: "Bénévolat" },
+  { value: "salaried", label: "Salariat" },
+  { value: "freelance", label: "Freelance / consultance" },
+  { value: "mandate", label: "Mandat de gouvernance" },
+] as const;
+
+const LEVEL_OPTIONS = [
+  { value: "junior", label: "Junior" },
+  { value: "confirmed", label: "Confirmé" },
+  { value: "expert", label: "Expert" },
+  { value: "mandate", label: "Mandat / gouvernance" },
+] as const;
+
+const MOBILITY_OPTIONS = [
+  { value: "local", label: "Locale" },
+  { value: "national", label: "Nationale" },
+  { value: "international", label: "Internationale" },
+  { value: "field", label: "Terrain / missions" },
+] as const;
+
+const AVAILABILITY_OPTIONS = [
+  { value: "full_time", label: "Temps plein" },
+  { value: "part_time", label: "Temps partiel" },
+  { value: "occasional", label: "Occasionnel" },
+  { value: "evenings", label: "Soirs et week-ends" },
+] as const;
 
 export default function FicheCandidatPage() {
-  const { data: candidate, isLoading, isError, error } = useCandidat("1");
+  const { data, isLoading, isError } = useDesiredPosition();
+  const update = useUpdateDesiredPosition();
 
   if (isLoading) return <p>Chargement...</p>;
-  if (isError) return <p>Erreur : {error.message}</p>;
-  if (!candidate) return null;
+  if (isError)
+    return <p>Erreur : la fiche n'a pas pu être chargée</p>;
+  if (!data) return null;
 
-  const { fiche } = candidate;
+  const fiche = data;
 
   return (
     <main id="contenu" className="candidate-main">
@@ -27,7 +58,27 @@ export default function FicheCandidatPage() {
           <CandidateSidebar active="fiche" />
 
           <div className="candidate-content">
-            <form onSubmit={(e) => e.preventDefault()}>
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                const form = new FormData(e.currentTarget);
+                update.mutate({
+                  position_title: String(form.get("titre") ?? ""),
+                  engagement_types: form.getAll("engagement")
+                    .map(String) as DesiredPosition["engagement_types"],
+                  position_level: String(form.get("niveau") ?? "") as DesiredPosition["position_level"],
+                  mobility: String(form.get("mobilite") ?? "") as DesiredPosition["mobility"],
+                  availability: String(form.get("volume") ?? "") as DesiredPosition["availability"],
+                  min_daily_rate: form.get("tjm")
+                    ? String(form.get("tjm"))
+                    : null,
+                  available_from: form.get("dispo")
+                    ? String(form.get("dispo"))
+                    : null,
+                  email_alerts: form.get("alerte") === "on",
+                });
+              }}
+            >
               <div className="row">
                 <div className="col-lg-8">
                   <div className="form-block">
@@ -46,7 +97,7 @@ export default function FicheCandidatPage() {
                         className="form-control"
                         required
                         maxLength={120}
-                        defaultValue={fiche.titre}
+                        defaultValue={fiche.position_title}
                       />
                       <p className="form-text">
                         Court et explicite : c'est ce que les ONG verront en
@@ -55,148 +106,94 @@ export default function FicheCandidatPage() {
                     </div>
                     <div className="row g-3">
                       <div className="col-sm-6">
-                        <label htmlFor="p-type" className="form-label">
+                        <label className="form-label">
                           Types d'engagement souhaités
                         </label>
                         <select
-                          id="p-type"
-                          name="p-type"
+                          name="engagement"
                           className="form-select"
                           multiple
                           size={4}
-                          aria-describedby="p-type-help"
-                          defaultValue={fiche.typesEngagement}
+                          required
                         >
-                          <option>Bénévolat</option>
-                          <option>Salariat</option>
-                          <option>Freelance / consultance</option>
-                          <option>Mandat de gouvernance</option>
-                        </select>
-                        <p id="p-type-help" className="form-text">
-                          Maintenez Ctrl (Cmd) pour choisir plusieurs types.
-                        </p>
-                      </div>
-                      <div className="col-sm-6">
-                        <label htmlFor="p-niveau" className="form-label">
-                          Niveau de poste
-                        </label>
-                        <select
-                          id="p-niveau"
-                          name="niveau"
-                          className="form-select"
-                          defaultValue={fiche.niveau}
-                        >
-                          <option>Junior</option>
-                          <option>Confirmé</option>
-                          <option>Expert</option>
-                          <option>Mandat / gouvernance</option>
+                          {ENGAGEMENT_OPTIONS.map((opt) => (
+                            <option
+                              key={opt.value}
+                              value={opt.value}
+                              selected={fiche.engagement_types.includes(opt.value)}
+                            >
+                              {opt.label}
+                            </option>
+                          ))}
                         </select>
                       </div>
-                    </div>
-                  </div>
-
-                  <div className="form-block">
-                    <h3>Causes et zones</h3>
-                    <div className="row g-3">
                       <div className="col-sm-6">
-                        <label htmlFor="p-causes" className="form-label">
-                          Causes préférées
-                        </label>
-                        <input
-                          type="text"
-                          id="p-causes"
-                          name="causes"
-                          className="form-control"
-                          defaultValue={fiche.causes}
-                        />
-                      </div>
-                      <div className="col-sm-6">
-                        <label htmlFor="p-exclues" className="form-label">
-                          Causes exclues
-                        </label>
-                        <input
-                          type="text"
-                          id="p-exclues"
-                          name="exclues"
-                          className="form-control"
-                          placeholder="Optionnel"
-                          defaultValue={fiche.causesExclues}
-                        />
-                      </div>
-                      <div className="col-sm-6">
-                        <label htmlFor="p-geo" className="form-label">
-                          Géographies recherchées
-                        </label>
-                        <input
-                          type="text"
-                          id="p-geo"
-                          name="geo"
-                          className="form-control"
-                          defaultValue={fiche.geo}
-                        />
-                      </div>
-                      <div className="col-sm-6">
-                        <label htmlFor="p-mobilite" className="form-label">
-                          Mobilité
-                        </label>
-                        <select
-                          id="p-mobilite"
-                          name="mobilite"
-                          className="form-select"
-                          defaultValue={fiche.mobilite}
-                        >
-                          <option>Locale</option>
-                          <option>Nationale</option>
-                          <option>Internationale</option>
-                          <option>Terrain / missions</option>
+                        <label className="form-label">Niveau de poste</label>
+                        <select name="niveau" className="form-select">
+                          {LEVEL_OPTIONS.map((opt) => (
+                            <option
+                              key={opt.value}
+                              value={opt.value}
+                              selected={fiche.position_level === opt.value}
+                            >
+                              {opt.label}
+                            </option>
+                          ))}
                         </select>
                       </div>
                     </div>
                   </div>
 
                   <div className="form-block">
-                    <h3>Disponibilité</h3>
+                    <h3>Zones et disponibilité</h3>
                     <div className="row g-3">
                       <div className="col-sm-6">
-                        <label htmlFor="p-volume" className="form-label">
-                          Volume horaire
-                        </label>
-                        <select
-                          id="p-volume"
-                          name="volume"
-                          className="form-select"
-                          defaultValue={fiche.volume}
-                        >
-                          <option>Temps plein</option>
-                          <option>Temps partiel</option>
-                          <option>Occasionnel</option>
-                          <option>Soirs et week-ends</option>
+                        <label className="form-label">Mobilité</label>
+                        <select name="mobilite" className="form-select">
+                          {MOBILITY_OPTIONS.map((opt) => (
+                            <option
+                              key={opt.value}
+                              value={opt.value}
+                              selected={fiche.mobility === opt.value}
+                            >
+                              {opt.label}
+                            </option>
+                          ))}
                         </select>
                       </div>
                       <div className="col-sm-6">
-                        <label htmlFor="p-tjm" className="form-label">
+                        <label className="form-label">Volume horaire</label>
+                        <select name="volume" className="form-select">
+                          {AVAILABILITY_OPTIONS.map((opt) => (
+                            <option
+                              key={opt.value}
+                              value={opt.value}
+                              selected={fiche.availability === opt.value}
+                            >
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="col-sm-6">
+                        <label className="form-label">
                           TJM minimum (freelance)
                         </label>
                         <div className="input-group">
                           <input
                             type="number"
-                            id="p-tjm"
                             name="tjm"
                             className="form-control"
                             min={0}
                             step={10}
                             placeholder="0"
-                            defaultValue={fiche.tjm}
+                            defaultValue={fiche.min_daily_rate ?? 0}
                           />
                           <span className="input-group-text">€ / jour</span>
                         </div>
-                        <p className="form-text">
-                          Laissez vide si vous ne cherchez pas de mission
-                          facturée.
-                        </p>
                       </div>
                       <div className="col-sm-6">
-                        <label htmlFor="p-dispo" className="form-label">
+                        <label className="form-label">
                           Disponible à partir du{" "}
                           <span className="req" aria-hidden="true">
                             *
@@ -204,71 +201,24 @@ export default function FicheCandidatPage() {
                         </label>
                         <input
                           type="date"
-                          id="p-dispo"
                           name="dispo"
                           className="form-control"
-                          aria-describedby="p-dispo-err"
                           required
-                          defaultValue={fiche.disponibleAPartirDu}
+                          defaultValue={fiche.available_from ?? ""}
                         />
-                        <p id="p-dispo-err" className="field-error">
-                          <i className="bi bi-exclamation-circle"></i> Veuillez
-                          indiquer une date de disponibilité pour publier la
-                          fiche.
-                        </p>
                       </div>
                     </div>
                   </div>
 
                   <div className="form-block">
-                    <h3>Compétences</h3>
-                    <div className="mb-3">
-                      <label htmlFor="p-comp-valoriser" className="form-label">
-                        Compétences à valoriser
-                      </label>
-                      <input
-                        type="text"
-                        id="p-comp-valoriser"
-                        name="comp-valoriser"
-                        className="form-control"
-                        defaultValue={fiche.competencesAValoriser}
-                      />
-                    </div>
-                    <div className="mb-1">
-                      <label htmlFor="p-comp-developper" className="form-label">
-                        Compétences à développer
-                      </label>
-                      <input
-                        type="text"
-                        id="p-comp-developper"
-                        name="comp-developper"
-                        className="form-control"
-                        placeholder="Ex. levée de fonds, suivi-évaluation"
-                        defaultValue={fiche.competencesADevelopper}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form-block">
                     <h3>Visibilité et alertes</h3>
-                    <div className="form-check form-switch mb-3">
-                      <input
-                        className="form-check-input"
-                        type="checkbox"
-                        id="p-actif"
-                        defaultChecked={fiche.rechercheActive}
-                      />
-                      <label className="form-check-label" htmlFor="p-actif">
-                        Mode « je cherche activement » — ma fiche est visible
-                        par les ONG
-                      </label>
-                    </div>
                     <div className="form-check">
                       <input
                         className="form-check-input"
                         type="checkbox"
                         id="p-alerte"
-                        defaultChecked={fiche.alerteEmail}
+                        name="alerte"
+                        defaultChecked={fiche.email_alerts}
                       />
                       <label className="form-check-label" htmlFor="p-alerte">
                         Recevoir par e-mail les nouvelles offres correspondant à
@@ -279,12 +229,22 @@ export default function FicheCandidatPage() {
 
                   <div className="form-actions">
                     <button type="submit" className="btn btn-primary">
-                      Enregistrer la fiche
+                      {update.isPending
+                        ? "Enregistrement..."
+                        : "Enregistrer la fiche"}
                     </button>
                     <Link to="/" className="btn btn-subtle">
                       Annuler les modifications
                     </Link>
                   </div>
+                  {update.isError && (
+                    <p className="text-danger mt-2">
+                      Une erreur est survenue lors de l'enregistrement.
+                    </p>
+                  )}
+                  {update.isSuccess && (
+                    <p className="text-success mt-2">Fiche enregistrée.</p>
+                  )}
                 </div>
 
                 <div className="col-lg-4">
@@ -294,11 +254,7 @@ export default function FicheCandidatPage() {
                       <h4>Conseil</h4>
                       <p>
                         Plus votre fiche est complète, plus vous apparaissez
-                        dans les recherches par mot-clé des ONG. Les champs avec{" "}
-                        <span className="req" aria-hidden="true">
-                          *
-                        </span>{" "}
-                        sont obligatoires.
+                        dans les recherches par mot-clé des ONG.
                       </p>
                     </div>
                   </div>

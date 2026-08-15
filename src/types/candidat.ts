@@ -1,115 +1,96 @@
+// --- Desired position ("Fiche poste recherché") ---
+
 export type EngagementType =
-  | "Bénévolat"
-  | "Salariat"
-  | "Freelance / consultance"
-  | "Mandat de gouvernance"
-  | "Mécénat";
+  | "volunteering"
+  | "salaried"
+  | "freelance"
+  | "consulting"
+  | "mandate";
 
-export type NiveauPoste =
-  | "Junior"
-  | "Confirmé"
-  | "Expert"
-  | "Mandat / gouvernance";
+export type Availability =
+  | "full_time"
+  | "part_time"
+  | "occasional"
+  | "evenings"
+  | "weekends";
 
-export type Mobilite =
-  | "Locale"
-  | "Nationale"
-  | "Internationale"
-  | "Terrain / missions";
+export type Mobility =
+  | "local"
+  | "regional"
+  | "national"
+  | "international"
+  | "field";
 
-export type VolumeHoraire =
-  | "Temps plein"
-  | "Temps partiel"
-  | "Occasionnel"
-  | "Soirs et week-ends";
+export type PositionLevel =
+  | "junior"
+  | "confirmed"
+  | "senior"
+  | "expert"
+  | "mandate";
 
-export interface CandidateFiche {
-  /** Intitulé du poste recherché */
-  titre: string;
-
-  /** Types d'engagement souhaités (multi-select) */
-  typesEngagement: EngagementType[];
-
-  /** Niveau de poste recherché */
-  niveau: NiveauPoste;
-
-  /** Causes et zones */
-  causes: string;
-  causesExclues?: string;
-  geo: string;
-  mobilite: Mobilite;
-
-  /** Disponibilité */
-  volume: VolumeHoraire;
-  tjm?: number; // TJM minimum (freelance), € / jour
-  disponibleAPartirDu: string; // ISO date string, required
-
-  /** Compétences */
-  competencesAValoriser: string;
-  competencesADevelopper?: string;
-
-  /** Visibilité et alertes */
-  rechercheActive: boolean;
-  alerteEmail: boolean;
+export interface DesiredPosition {
+  id: string;
+  position_title: string;
+  engagement_types: EngagementType[];
+  preferred_causes: string[];
+  excluded_causes: string[];
+  modalities: string[];
+  availability: Availability | "";
+  mobility: Mobility | "";
+  position_level: PositionLevel | "";
+  preferred_geographies: string[];
+  skills_to_leverage: string[];
+  skills_to_develop: string[];
+  min_daily_rate: string | null;
+  available_from: string | null;
+  available_until: string | null;
+  email_alerts: boolean;
 }
 
-/** Étape générique d'un tunnel de candidature */
-export type EtapeCandidature =
-  | "Reçue"
-  | "Pré-qualifiée"
-  | "Entretien"
-  | "Décision"
-  | "Offre";
+// --- Candidate dashboard ("Espace candidat") ---
 
-export type EtapeState = "done" | "current" | "";
+export type ApplicationStage =
+  | "submitted"
+  | "prequalified"
+  | "interview"
+  | "decision"
+  | "offer";
+
+export type TrackerState = "done" | "current" | "";
 
 export interface TrackerStep {
-  label: string; // "Étape 1"
-  name: EtapeCandidature;
-  state: EtapeState;
+  label: string;
+  name: string;
+  state: TrackerState;
 }
-
-export type ApplicationBadge =
-  | "status-warning"
-  | "status-neutral"
-  | "status-success";
 
 export interface Application {
   id: string;
-  offre: string;
+  offer: string;
   org: string;
-  type: EngagementType;
-  badge: ApplicationBadge;
-  icon: string; // bootstrap icon class, e.g. "bi-hourglass-split"
-  etape: EtapeCandidature;
-  lieu?: string;
-  dateEnvoi?: string; // ISO date string
-  maj: string; // display string, e.g. "Il y a 2 h"
-  /** Present only for the currently highlighted/tracked application */
-  tracker?: TrackerStep[];
+  engagement_type: string;
+  stage: ApplicationStage;
+  location: string | null;
+  submitted_at: string | null;
+  updated_at: string;
+  tracker: TrackerStep[];
 }
 
 export interface CandidateStats {
   candidatures: number;
-  candidaturesHint?: string;
   offresSauvegardees: number;
-  offresSauvegardeesHint?: string;
   missionsVerifiees: number;
-  missionsVerifieesHint?: string;
   messagesNonLus: number;
-  messagesNonLusHint?: string;
 }
 
-export interface Candidate {
-  id: string;
-  nom: string;
-  prenom: string;
+export interface CandidateDashboard {
+  first_name: string;
+  last_name: string;
   email: string;
-
-  /** Fiche « poste recherché » — recherche par mot-clé côté ONG */
-  fiche: CandidateFiche;
-
-  /** Données du tableau de bord (page Espace candidat) */
-  stats: CandidateStats;
-  candidatures: Application[];
+  applications_count: number;
+  applications: Application[];
+  // Optional: only present when the backend can compute them.
+  saved_offers_count?: number;
+  verified_missions_count?: number;
+  unread_messages_count?: number;
 }

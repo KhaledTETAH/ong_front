@@ -1,18 +1,33 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@/context/authStore";
+import { logout } from "@/services/authService";
 import "./CandidateHeader.css";
 
 const menuLinks = [
-  { to: "/", label: "Mes candidatures" },
-  { to: "/candidat-fiche", label: "Fiche « poste recherché »" },
+  { to: "/candidat/espace", label: "Mes candidatures" },
+  { to: "/candidat/fiche", label: "Fiche « poste recherché »" },
 ] as const;
 
-const menuPlaceholders = [
-  "Offres correspondantes",
-  "Portfolio d'engagement",
-  "Messagerie",
-];
-
 export default function CandidateHeader() {
+  const navigate = useNavigate();
+  const user = useAuthStore((s) => s.user);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const clearSession = useAuthStore((s) => s.clearSession);
+
+  const displayName = [user?.first_name, user?.last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
+  async function handleLogout() {
+    try {
+      if (accessToken) await logout();
+    } finally {
+      clearSession();
+      navigate("/");
+    }
+  }
+
   return (
     <header className="site-header">
       <div className="container">
@@ -25,18 +40,21 @@ export default function CandidateHeader() {
           </Link>
           <div className="header-cta">
             <Link
-              to="/ong-profile"
+              to="/"
               className="btn btn-subtle btn-sm btn-header-desktop"
             >
               Voir le site
             </Link>
             <span className="header-user btn-header-desktop">
-              <i className="bi bi-person-circle" aria-hidden="true"></i> Yasmine
-              B.
+              <i className="bi bi-person-circle" aria-hidden="true"></i>{" "}
+              {displayName || user?.email || "Candidat"}
             </span>
-            <a href="#" className="btn btn-subtle btn-sm btn-header-desktop">
+            <button
+              className="btn btn-subtle btn-sm btn-header-desktop"
+              onClick={handleLogout}
+            >
               Déconnexion
-            </a>
+            </button>
           </div>
           <details className="mobile-nav">
             <summary aria-label="Ouvrir le menu">
@@ -48,16 +66,11 @@ export default function CandidateHeader() {
                   <Link to={l.to}>{l.label}</Link>
                 </li>
               ))}
-              {menuPlaceholders.map((label) => (
-                <li key={label}>
-                  <a href="#">{label}</a>
-                </li>
-              ))}
               <li>
-                <Link to="/ong-profil">Voir le site</Link>
+                <Link to="/">Voir le site</Link>
               </li>
               <li>
-                <a href="#">Déconnexion</a>
+                <button onClick={handleLogout}>Déconnexion</button>
               </li>
             </ul>
           </details>

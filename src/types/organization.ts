@@ -1,5 +1,5 @@
 export type OrganizationType = 'association' | 'foundation' | 'ngo' | 'waqf';
-export type VerificationStatus = 'pending' | 'verified' | 'certified_plus';
+export type VerificationStatus = 'in_progress' | 'verified' | 'certified_plus';
 
 export interface Country {
   code: string;
@@ -7,7 +7,7 @@ export interface Country {
 }
 
 export interface Cause {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 }
@@ -35,4 +35,14 @@ export interface OrganizationDetail extends Organization {
   logo_url?: string;
   banner_url?: string;
   founded_year?: number | null;
+  number_of_volunteers?: number | null;
+  documents: OrganizationDocument[];
+}
+
+export interface OrganizationDocument {
+  id: string;
+  label: string;
+  document_type: string;
+  file_url: string;
+  verified: boolean;
 }

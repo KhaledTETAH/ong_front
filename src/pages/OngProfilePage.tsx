@@ -1,13 +1,15 @@
-import { Link } from "react-router-dom";
-import { useOrganization } from "@/hooks/useOrganizations";
+import { Link, useParams } from "react-router-dom";
+import { useOrganizationBySlug } from "@/hooks/useOrganizations";
+import { engagementTypeLabels } from "@/types/mission";
 
 export default function OngProfilePage() {
+  const { slug } = useParams<{ slug: string }>();
   const {
     data: organization,
     isPending,
     isError,
     error,
-  } = useOrganization("67f24b21-3eb6-49c7-b0a4-ea4bdeef3346"); // just for now to test the api
+  } = useOrganizationBySlug(slug ?? "");
 
   if (isPending) return <p>Chargement...</p>;
   if (isError)
@@ -114,14 +116,16 @@ export default function OngProfilePage() {
                       <h3>{o.title}</h3>
                       <div className="offer-meta">
                         <span>
-                          <i className="bi bi-geo-alt"></i> {o.city}
+                          <i className="bi bi-geo-alt"></i>{" "}
+                          {[o.city, o.country?.name_fr].filter(Boolean).join(", ")}
                         </span>
                         <span>
-                          <i className="bi bi-clock"></i> {o.duration_label}
+                          <i className="bi bi-clock"></i>{" "}
+                          {o.duration_label || "Durée à définir"}
                         </span>
                         <span>
                           <i className="bi bi-briefcase"></i>{" "}
-                          {o.engagement_type}
+                          {engagementTypeLabels[o.engagement_type]}
                         </span>
                       </div>
                       <a
@@ -146,10 +150,17 @@ export default function OngProfilePage() {
                       <strong>{organization.founded_year}</strong>
                     </li>
                   )}
-                  {/* Note: "Bénévoles" count isn't in the API yet, so I removed it to avoid confusion */}
+                  {organization.number_of_volunteers != null && (
+                    <li>
+                      <span>Bénévoles</span>
+                      <strong>{organization.number_of_volunteers}</strong>
+                    </li>
+                  )}
                   <li>
                     <span>Offres ouvertes</span>
-                    <strong>{organization.offers.length}</strong>
+                    <strong>
+                      {organization.open_offers_count ?? organization.offers.length}
+                    </strong>
                   </li>
                   <li>
                     <span>Causes</span>
@@ -162,25 +173,19 @@ export default function OngProfilePage() {
 
               <div className="card p-3 mb-3">
                 <h2 className="h6">Transparence</h2>
-                {/* Note: documentsTransparence isn't in the API yet. 
-                    I've hardcoded the 3 expected items for the UI. 
-                    You'll need to add `documents` to the OrganizationSerializer later. */}
-                <ul className="ong-docs">
-                  <li>
-                    <i className="bi bi-file-earmark-check"></i> Statuts déposés
-                  </li>
-                  <li>
-                    <i className="bi bi-file-earmark-check"></i> Déclaration
-                    officielle (RNA)
-                  </li>
-                  <li>
-                    <i className="bi bi-file-earmark-check"></i> Dernier rapport
-                    d'activité
-                  </li>
+                <ul className="ong-docs mb-0">
+                  {organization.documents.length > 0 ? (
+                    organization.documents.map((doc) => (
+                      <li key={doc.id}>
+                        <i className="bi bi-file-earmark-check"></i> {doc.label}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="text-soft small">
+                      Documents contrôlés lors de la vérification documentaire.
+                    </li>
+                  )}
                 </ul>
-                <p className="text-soft small mb-0">
-                  Documents contrôlés lors de la vérification documentaire.
-                </p>
               </div>
 
               {(organization.verification_status === "verified" ||
