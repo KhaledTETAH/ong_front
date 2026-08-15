@@ -15,6 +15,11 @@ export default function CandidateHeader() {
   const refreshToken = useAuthStore((s) => s.refreshToken);
   const clearSession = useAuthStore((s) => s.clearSession);
 
+  const displayName = [user?.first_name, user?.last_name]
+    .filter(Boolean)
+    .join(" ")
+    .trim();
+
   async function handleLogout() {
     try {
       if (accessToken && refreshToken) await logout(refreshToken, accessToken);
@@ -43,7 +48,7 @@ export default function CandidateHeader() {
             </Link>
             <span className="header-user btn-header-desktop">
               <i className="bi bi-person-circle" aria-hidden="true"></i>{" "}
-              {user?.email || "Candidat"}
+              {displayName || user?.email || "Candidat"}
             </span>
             <button
               className="btn btn-subtle btn-sm btn-header-desktop"

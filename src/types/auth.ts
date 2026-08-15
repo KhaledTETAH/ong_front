@@ -11,6 +11,9 @@ export interface AuthUser {
   role: UserRole;
   status: 'active' | 'suspended' | 'banned' | 'pending';
   email_verified: boolean;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
 }
 
 export interface CandidateRegistration {
