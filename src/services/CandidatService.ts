@@ -16,7 +16,7 @@ export async function updateDesiredPosition(
   token: string | null,
 ): Promise<DesiredPosition> {
   return apiData<DesiredPosition>("candidates/desired-position/", {
-    method: "PUT",
+    method: "PATCH",
     body: data,
     token,
   });
