@@ -36,7 +36,6 @@ export default function App() {
         {/* --- pages using the shared public layout --- */}
         <Route element={<PublicLayout />}>
           <Route path="/annuaire/:slug" element={<OngProfilePage />} />
-          <Route path="/ong-profile/:id" element={<OngProfilePage />} />
         </Route>
 
         {/* --- candidate routes --- */}

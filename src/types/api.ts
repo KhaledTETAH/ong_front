@@ -6,7 +6,7 @@ export interface ApiEnvelope<T> {
   data: T;
 }
 
-// Same success shape, kept for the axios-based services (organizationService).
+// Same success shape, used by all API services.
 export interface ApiSuccessResponse<T> {
   success: true;
   status_code: number;
