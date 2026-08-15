@@ -87,7 +87,9 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   const payload: unknown = contentType.includes('application/json') ? await response.json() : null;
 
   // On an expired token, try a single refresh, then retry the original request.
-  if (response.status === 401 && !_retried && !token) {
+  // Only refresh when the request actually carried an access token; tokenless
+  // requests (e.g. a 401 from /auth/login/) must not trigger a refresh.
+  if (response.status === 401 && !_retried && !token && accessToken) {
     if (!refreshPromise) {
       refreshPromise = tryRefresh().finally(() => {
         refreshPromise = null;
