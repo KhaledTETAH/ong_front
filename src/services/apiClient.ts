@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/context/authStore';
 import type { ApiEnvelope } from '@/types/api';
 
 export const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? 'http://127.0.0.1:8000/api/v1').replace(/\/$/, '');
@@ -6,6 +7,7 @@ type ApiRequestOptions = Omit<RequestInit, 'body'> & {
   body?: BodyInit | object;
   query?: object;
   token?: string | null;
+  _retried?: boolean;
 };
 
 export class ApiError extends Error {
@@ -20,9 +22,49 @@ export class ApiError extends Error {
   }
 }
 
+// Holds the in-flight refresh so concurrent 401s share a single refresh call.
+let refreshPromise: Promise<string | null> | null = null;
+
+/** Refreshes the access token via the backend and stores the new session. */
+async function tryRefresh(): Promise<string | null> {
+  const { refreshToken, setTokens, clearTokens } = useAuthStore.getState();
+  if (!refreshToken) return null;
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ refresh: refreshToken }),
+    });
+
+    if (!response.ok) {
+      clearTokens();
+      return null;
+    }
+
+    const payload = (await response.json()) as {
+      data?: { access?: string; refresh?: string };
+    };
+    const access = payload.data?.access;
+    const refresh = payload.data?.refresh ?? refreshToken;
+
+    if (!access) {
+      clearTokens();
+      return null;
+    }
+
+    setTokens(access, refresh);
+    return access;
+  } catch {
+    clearTokens();
+    return null;
+  }
+}
+
 /** Sends one request to Django and preserves the server's error details. */
 export async function apiRequest<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
-  const { body, query, token, headers, ...requestOptions } = options;
+  const { body, query, token, headers, _retried, ...requestOptions } = options;
+  const accessToken = token ?? useAuthStore.getState().accessToken;
   const url = new URL(`${API_BASE_URL}/${path.replace(/^\//, '')}`);
 
   for (const [key, value] of Object.entries(query ?? {})) {
@@ -35,7 +77,7 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
     headers: {
       Accept: 'application/json',
       ...(isJsonBody ? { 'Content-Type': 'application/json' } : {}),
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
       ...headers,
     },
     body: isJsonBody ? JSON.stringify(body) : body,
@@ -43,6 +85,19 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
 
   const contentType = response.headers.get('content-type') ?? '';
   const payload: unknown = contentType.includes('application/json') ? await response.json() : null;
+
+  // On an expired token, try a single refresh, then retry the original request.
+  if (response.status === 401 && !_retried && !token) {
+    if (!refreshPromise) {
+      refreshPromise = tryRefresh().finally(() => {
+        refreshPromise = null;
+      });
+    }
+    const newAccess = await refreshPromise;
+    if (newAccess) {
+      return apiRequest<T>(path, { ...options, token: newAccess, _retried: true });
+    }
+  }
 
   if (!response.ok) {
     const message = typeof payload === 'object' && payload !== null && 'message' in payload
