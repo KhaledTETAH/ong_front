@@ -1,13 +1,14 @@
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { useOrganization } from "@/hooks/useOrganizations";
 
 export default function OngProfilePage() {
+  const { id } = useParams<{ id: string }>();
   const {
     data: organization,
     isPending,
     isError,
     error,
-  } = useOrganization("67f24b21-3eb6-49c7-b0a4-ea4bdeef3346"); // just for now to test the api
+  } = useOrganization(id ?? "");
 
   if (isPending) return <p>Chargement...</p>;
   if (isError)
