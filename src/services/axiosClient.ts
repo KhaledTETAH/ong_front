@@ -1,12 +1,10 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/context/authStore";
 import type { ApiErrorResponse } from "@/types/api";
-
-const BASE_URL =
-  import.meta.env.NEXT_PUBLIC_API_URL || "http://localhost:8000/api/v1";
+import { API_BASE_URL } from "./apiClient";
 
 const api = axios.create({
-  baseURL: BASE_URL,
+  baseURL: API_BASE_URL,
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -41,7 +39,7 @@ api.interceptors.response.use(
 
         // Use raw axios to avoid interceptor loops during refresh
         const refreshResponse = await axios.post(
-          `${BASE_URL}/accounts/refresh/`,
+          `${API_BASE_URL}/auth/refresh/`,
           {
             refresh: refreshToken,
           },
