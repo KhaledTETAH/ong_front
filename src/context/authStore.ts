@@ -1,33 +1,32 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { AuthTokens, AuthUser } from '@/types/auth';
+import type { AuthUser } from '@/types/auth';
 
 type AuthState = {
+  // Short-lived access token, kept in memory only (never persisted).
   accessToken: string | null;
-  refreshToken: string | null;
+  // Public profile info (no secrets), persisted for a stable UI across reloads.
   user: AuthUser | null;
-  setSession: (tokens: AuthTokens, user: AuthUser) => void;
-  setAccessToken: (accessToken: string) => void;
-  setTokens: (access: string, refresh: string) => void;
+  setSession: (access: string, user: AuthUser) => void;
+  setAccessToken: (access: string) => void;
   clearSession: () => void;
-  clearTokens: () => void;
 };
 
-/** Persists only the JWT session information; profile data is refreshed after login. */
+/** Keeps the access token in memory; only the non-secret user info is persisted. */
 export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       accessToken: null,
-      refreshToken: null,
       user: null,
-      setSession: (tokens, user) =>
-        set({ accessToken: tokens.access, refreshToken: tokens.refresh, user }),
-      setAccessToken: (accessToken) => set({ accessToken }),
-      setTokens: (access, refresh) =>
-        set({ accessToken: access, refreshToken: refresh }),
-      clearSession: () => set({ accessToken: null, refreshToken: null, user: null }),
-      clearTokens: () => set({ accessToken: null, refreshToken: null }),
+      setSession: (access, user) => set({ accessToken: access, user }),
+      setAccessToken: (access) => set({ accessToken: access }),
+      clearSession: () => set({ accessToken: null, user: null }),
     }),
-    { name: 'ong-auth-session' },
+    {
+      name: 'ong-auth-session',
+      // The refresh token lives in an httpOnly cookie; never store the access
+      // token on disk. Persist only the non-secret user profile.
+      partialize: (state) => ({ user: state.user }),
+    },
   ),
 );

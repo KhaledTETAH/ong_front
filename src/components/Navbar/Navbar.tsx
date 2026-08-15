@@ -10,13 +10,12 @@ export function Navbar() {
 
   const user = useAuthStore((s) => s.user);
   const accessToken = useAuthStore((s) => s.accessToken);
-  const refreshToken = useAuthStore((s) => s.refreshToken);
   const clearSession = useAuthStore((s) => s.clearSession);
 
   async function handleLogout() {
     setIsLoggingOut(true);
     try {
-      if (accessToken && refreshToken) await logout(refreshToken, accessToken);
+      if (accessToken) await logout();
     } finally {
       clearSession();
       setMenuOpen(false);

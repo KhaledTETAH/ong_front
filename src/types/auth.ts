@@ -2,7 +2,6 @@ export type UserRole = 'candidate' | 'ngo_member' | 'volunteering_referent' | 'a
 
 export interface AuthTokens {
   access: string;
-  refresh: string;
 }
 
 export interface AuthUser {

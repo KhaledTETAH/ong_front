@@ -12,7 +12,6 @@ export default function CandidateHeader() {
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const accessToken = useAuthStore((s) => s.accessToken);
-  const refreshToken = useAuthStore((s) => s.refreshToken);
   const clearSession = useAuthStore((s) => s.clearSession);
 
   const displayName = [user?.first_name, user?.last_name]
@@ -22,7 +21,7 @@ export default function CandidateHeader() {
 
   async function handleLogout() {
     try {
-      if (accessToken && refreshToken) await logout(refreshToken, accessToken);
+      if (accessToken) await logout();
     } finally {
       clearSession();
       navigate("/");

@@ -25,38 +25,36 @@ export class ApiError extends Error {
 // Holds the in-flight refresh so concurrent 401s share a single refresh call.
 let refreshPromise: Promise<string | null> | null = null;
 
-/** Refreshes the access token via the backend and stores the new session. */
+/** Refreshes the access token via the backend's httpOnly refresh cookie. */
 async function tryRefresh(): Promise<string | null> {
-  const { refreshToken, setTokens, clearTokens } = useAuthStore.getState();
-  if (!refreshToken) return null;
+  const { setAccessToken, clearSession } = useAuthStore.getState();
 
   try {
     const response = await fetch(`${API_BASE_URL}/auth/refresh/`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ refresh: refreshToken }),
+      credentials: 'include',
+      headers: { Accept: 'application/json' },
     });
 
     if (!response.ok) {
-      clearTokens();
+      clearSession();
       return null;
     }
 
     const payload = (await response.json()) as {
-      data?: { access?: string; refresh?: string };
+      data?: { access?: string };
     };
     const access = payload.data?.access;
-    const refresh = payload.data?.refresh ?? refreshToken;
 
     if (!access) {
-      clearTokens();
+      clearSession();
       return null;
     }
 
-    setTokens(access, refresh);
+    setAccessToken(access);
     return access;
   } catch {
-    clearTokens();
+    clearSession();
     return null;
   }
 }
@@ -74,6 +72,8 @@ export async function apiRequest<T>(path: string, options: ApiRequestOptions = {
   const isJsonBody = body !== undefined && !(body instanceof FormData) && !(body instanceof URLSearchParams) && typeof body !== 'string';
   const response = await fetch(url, {
     ...requestOptions,
+    // Send cookies (httpOnly refresh token) across origins.
+    credentials: 'include',
     headers: {
       Accept: 'application/json',
       ...(isJsonBody ? { 'Content-Type': 'application/json' } : {}),

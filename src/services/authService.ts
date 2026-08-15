@@ -9,12 +9,14 @@ export function getCurrentUser(accessToken: string): Promise<AuthUser> {
   return apiData<AuthUser>('auth/me/', { token: accessToken });
 }
 
-export function refreshAccessToken(refresh: string): Promise<AuthTokens> {
-  return apiData<AuthTokens>('auth/refresh/', { method: 'POST', body: { refresh } });
+/** Restores a session from the httpOnly refresh cookie and returns the new access token. */
+export function refreshAccessToken(): Promise<AuthTokens> {
+  return apiData<AuthTokens>('auth/refresh/', { method: 'POST' });
 }
 
-export function logout(refresh: string, accessToken: string): Promise<null> {
-  return apiData<null>('auth/logout/', { method: 'POST', body: { refresh }, token: accessToken });
+/** Logs out using the httpOnly refresh cookie (cleared server-side). */
+export function logout(): Promise<null> {
+  return apiData<null>('auth/logout/', { method: 'POST' });
 }
 
 export function registerCandidate(data: CandidateRegistration): Promise<AuthUser> {

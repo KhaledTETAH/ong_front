@@ -20,7 +20,7 @@ export function LoginPage() {
     try {
       const tokens = await login(email, password);
       const user = await getCurrentUser(tokens.access);
-      setSession(tokens, user);
+      setSession(tokens.access, user);
       navigate(user.role === 'candidate' ? '/candidat/espace' : '/');
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : 'Connexion impossible. Réessayez.');

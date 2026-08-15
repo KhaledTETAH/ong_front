@@ -4,6 +4,7 @@ import {
   PublicLayout,
   RequireCandidate,
 } from "@/components/Layout/Layout";
+import { useAuthBootstrap } from "@/hooks/useAuthBootstrap";
 
 // Pages 1-6 (rafa) — self-contained public pages
 import { AnnuairePage } from "./pages/AnnuairePage";
@@ -21,6 +22,7 @@ import OngProfilePage from "./pages/OngProfilePage";
 import FicheCandidatPage from "./pages/FicheCandidatPage";
 
 export default function App() {
+  useAuthBootstrap();
   return (
     <BrowserRouter>
       <Routes>
