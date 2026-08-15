@@ -41,7 +41,7 @@ export interface DesiredPosition {
   preferred_geographies: string[];
   skills_to_leverage: string[];
   skills_to_develop: string[];
-  min_daily_rate: number | null;
+  min_daily_rate: string | null;
   available_from: string | null;
   available_until: string | null;
   email_alerts: boolean;

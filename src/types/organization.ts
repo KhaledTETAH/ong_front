@@ -1,5 +1,5 @@
 export type OrganizationType = 'association' | 'foundation' | 'ngo' | 'waqf';
-export type VerificationStatus = 'pending' | 'verified' | 'certified_plus';
+export type VerificationStatus = 'in_progress' | 'verified' | 'certified_plus';
 
 export interface Country {
   code: string;
@@ -7,7 +7,7 @@ export interface Country {
 }
 
 export interface Cause {
-  id: number;
+  id: string;
   name: string;
   slug: string;
 }

@@ -70,7 +70,7 @@ export default function FicheCandidatPage() {
                   mobility: String(form.get("mobilite") ?? "") as DesiredPosition["mobility"],
                   availability: String(form.get("volume") ?? "") as DesiredPosition["availability"],
                   min_daily_rate: form.get("tjm")
-                    ? Number(form.get("tjm"))
+                    ? String(form.get("tjm"))
                     : null,
                   available_from: form.get("dispo")
                     ? String(form.get("dispo"))
