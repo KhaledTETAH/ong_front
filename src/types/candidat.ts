@@ -1,4 +1,4 @@
-// --- Desired position (page 9, "Fiche poste recherché") ---
+// --- Desired position ("Fiche poste recherché") ---
 
 export type EngagementType =
   | "volunteering"
@@ -47,7 +47,7 @@ export interface DesiredPosition {
   email_alerts: boolean;
 }
 
-// --- Candidate dashboard (page 8, "Espace candidat") ---
+// --- Candidate dashboard ("Espace candidat") ---
 
 export type ApplicationStage =
   | "submitted"
