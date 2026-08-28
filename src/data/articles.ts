@@ -1,0 +1,6 @@
+export interface ArticleSummary { slug:string; category:string; title:string; excerpt:string; publishedAt:string; readingTime:string; icon:string }
+export const articles:ArticleSummary[]=[
+{slug:'mecenat-competences-deduction-fiscale',category:'Mécénat de compétences',title:'Mécénat de compétences : ce que vous pouvez déduire fiscalement',excerpt:'Comprendre la valorisation des jours-homme, la convention et l’attestation annuelle sans confondre estimation et conseil fiscal.',publishedAt:'18 août 2026',readingTime:'6 min',icon:'bi-calculator'},
+{slug:'recrutement-associatif-inclusif',category:'Recrutement',title:'Construire un recrutement associatif plus inclusif',excerpt:'Des critères lisibles, un suivi transparent et des retours utiles pour améliorer l’expérience de chaque candidat.',publishedAt:'9 août 2026',readingTime:'5 min',icon:'bi-people'},
+{slug:'engagement-france-maghreb',category:'Territoires',title:'Relier les initiatives d’engagement de la France au Maghreb',excerpt:'Comment les organisations partagent leurs compétences, leurs méthodes et leurs réseaux au-delà des frontières.',publishedAt:'27 juillet 2026',readingTime:'4 min',icon:'bi-globe-europe-africa'}];
+export const getArticle=(slug:string)=>articles.find(article=>article.slug===slug);

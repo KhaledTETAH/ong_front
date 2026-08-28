@@ -9,8 +9,8 @@ const initialOrganization: OrganizationRegistration = {
   owner_email: '', password: '', organization_name: '', organization_type: 'association', country_code: 'DZ', city: '', registry_number: '', description: '', mission: '',
 };
 
-export function RegisterPage() {
-  const [accountType, setAccountType] = useState<AccountType>('candidate');
+export function RegisterPage({ initialType = 'candidate' }: { initialType?: AccountType }) {
+  const [accountType, setAccountType] = useState<AccountType>(initialType);
   const [candidate, setCandidate] = useState({ email: '', phone: '', password: '', confirmPassword: '' });
   const [organization, setOrganization] = useState({ ...initialOrganization, confirmPassword: '' });
   const [error, setError] = useState<string | null>(null);
